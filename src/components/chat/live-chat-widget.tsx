@@ -85,7 +85,7 @@ export function LiveChatWidget() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-metallic to-anthracite text-black shadow-2xl transition hover:scale-105 hover:shadow-metallic/30"
+        className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-metallic to-anthracite text-black shadow-2xl transition duration-200 ease-out motion-safe:hover:scale-[1.02] hover:shadow-[0_0_24px_rgb(168_169_173/0.25)] sm:bottom-6 sm:right-6"
         aria-label="Live Chat öffnen"
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,7 +99,7 @@ export function LiveChatWidget() {
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[28rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl sm:w-96">
+        <div className="fixed inset-x-4 bottom-20 z-50 flex max-h-[min(28rem,calc(100dvh-6rem))] flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl sm:inset-x-auto sm:bottom-24 sm:right-6 sm:w-96">
           <div className="flex items-center justify-between border-b border-zinc-800 bg-anthracite px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-white">Live-Chat</p>
@@ -108,7 +108,7 @@ export function LiveChatWidget() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-zinc-400 hover:text-white"
+              className="text-zinc-400 transition-colors duration-200 ease-out hover:text-white"
               aria-label="Chat schließen"
             >
               ✕
@@ -125,12 +125,12 @@ export function LiveChatWidget() {
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="Ihr Name"
                 required
-                className="mt-4 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-metallic focus:outline-none"
+                className="mt-4 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-base text-white focus:border-metallic focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-4 rounded-full bg-metallic px-4 py-2.5 text-sm font-semibold text-black hover:bg-silver-light disabled:opacity-50"
+                className="btn-metallic mt-4 rounded-full bg-metallic px-4 py-2.5 text-sm font-semibold text-black hover:bg-silver-light disabled:opacity-50"
               >
                 {loading ? "..." : "Chat starten"}
               </button>
@@ -161,11 +161,11 @@ export function LiveChatWidget() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Nachricht..."
-                  className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-metallic focus:outline-none"
+                  className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-base text-white focus:border-metallic focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="rounded-xl bg-metallic px-4 py-2 text-sm font-semibold text-black"
+                  className="btn-metallic rounded-xl bg-metallic px-4 py-2 text-sm font-semibold text-black"
                 >
                   →
                 </button>

@@ -45,7 +45,7 @@ function YesNoField({
           required
           rows={3}
           placeholder="Bitte beschreiben (max. 200 Zeichen)"
-          className="mt-3 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white focus:border-metallic focus:outline-none"
+          className="mt-3 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-3 text-base text-white focus:border-metallic focus:outline-none"
         />
       )}
     </div>
@@ -102,7 +102,7 @@ export default function SellPage() {
           <p className="mt-4 text-zinc-400">Wir melden uns in Kürze bei Ihnen.</p>
           <Link
             href="/"
-            className="mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
+            className="btn-outline mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
           >
             Zur Startseite
           </Link>
@@ -213,7 +213,7 @@ export default function SellPage() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full rounded-sm border border-metallic bg-metallic/90 py-3.5 text-sm font-semibold tracking-wide text-black disabled:opacity-50"
+          className="btn-metallic w-full rounded-sm border border-metallic bg-metallic/90 py-3.5 text-sm font-semibold tracking-wide text-black disabled:opacity-50"
         >
           {status === "loading" ? "Wird gesendet..." : "Anfrage absenden"}
         </button>

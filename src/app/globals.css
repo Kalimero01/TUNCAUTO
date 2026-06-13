@@ -21,6 +21,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+@media (max-width: 1024px) {
+  .parallax-bg {
+    background-attachment: scroll;
+  }
 }
 
 body {
@@ -56,13 +63,128 @@ body {
   animation: fade-in-slow 1s ease-out forwards;
 }
 
+/* ── Hover utilities (public site) ── */
+
+.link-hover {
+  transition: color 0.2s ease-out;
+}
+
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease-out;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-metallic);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease-out;
+}
+
+.nav-link:hover {
+  color: var(--color-metallic);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.btn-metallic {
+  transition:
+    transform 0.2s ease-out,
+    filter 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    border-color 0.2s ease-out,
+    background-color 0.2s ease-out;
+}
+
+.btn-metallic:hover {
+  transform: scale(1.02);
+  filter: brightness(1.08);
+  box-shadow: 0 0 24px rgb(168 169 173 / 0.2);
+}
+
+.btn-outline {
+  transition:
+    transform 0.2s ease-out,
+    color 0.2s ease-out,
+    border-color 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    background-color 0.2s ease-out;
+}
+
+.btn-outline:hover {
+  transform: scale(1.02);
+  border-color: var(--color-metallic);
+  box-shadow: 0 0 16px rgb(168 169 173 / 0.12);
+}
+
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    border-color 0.2s ease-out;
 }
 
 .hover-lift:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgb(0 0 0 / 0.35);
+}
+
+.hover-lift-card {
+  transition:
+    transform 0.3s ease-out,
+    box-shadow 0.3s ease-out,
+    background-color 0.2s ease-out;
+}
+
+.hover-lift-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.3);
+}
+
+.social-icon-hover {
+  transition:
+    transform 0.2s ease-out,
+    color 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.social-icon-hover:hover {
+  transform: scale(1.08);
+  color: var(--color-metallic);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-in,
+  .animate-fade-in-slow {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav-link::after {
+    transition: none;
+  }
+
+  .btn-metallic:hover,
+  .btn-outline:hover,
+  .hover-lift:hover,
+  .hover-lift-card:hover,
+  .social-icon-hover:hover {
+    transform: none;
+  }
 }
 
 .bg-grid-pattern {
