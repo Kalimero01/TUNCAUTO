@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import { getCompany } from "@/lib/cms";
 import { getImpressumFields } from "@/lib/company";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Impressum",
-  robots: { index: true, follow: true },
-};
+export const metadata = pageMetadata.impressum;
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +22,12 @@ export default async function ImpressumPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Startseite", path: "/" },
+          { name: "Impressum", path: "/impressum" },
+        ])}
+      />
       <h1 className="text-3xl font-light text-white">Impressum</h1>
 
       <section className="mt-8 space-y-8 text-zinc-400">

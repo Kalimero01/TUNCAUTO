@@ -5,10 +5,12 @@ import Image from "next/image";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { ALL_EQUIPMENT_FEATURES } from "@/lib/vehicle-constants";
 import { formatMileage, formatPrice } from "@/lib/utils";
+import { vehicleImageAlt } from "@/lib/seo";
 
 type VehicleData = {
   make: string;
   model: string;
+  year: number;
   price: string;
   firstRegistration: string | null;
   mileage: number | null;
@@ -36,6 +38,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const galleryImages = vehicle.images.slice(0, 10);
+  const imageAlt = vehicleImageAlt(vehicle.make, vehicle.model, vehicle.year);
 
   const subtitle = [vehicle.horsepower ? `${vehicle.horsepower} PS` : null, vehicle.transmission]
     .filter(Boolean)
@@ -64,7 +67,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
               {galleryImages[activeImage] ? (
                 <Image
                   src={galleryImages[activeImage].url}
-                  alt={`${vehicle.make} ${vehicle.model}`}
+                  alt={imageAlt}
                   fill
                   className="object-cover"
                   priority
@@ -86,7 +89,14 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
                       i === activeImage ? "ring-red-600" : "ring-zinc-800 hover:ring-zinc-600"
                     }`}
                   >
-                    <Image src={img.url} alt="" fill className="object-cover" loading="lazy" unoptimized />
+                    <Image
+                      src={img.url}
+                      alt={`${imageAlt} — Bild ${i + 1}`}
+                      fill
+                      className="object-cover"
+                      loading="lazy"
+                      unoptimized
+                    />
                   </button>
                 ))}
               </div>

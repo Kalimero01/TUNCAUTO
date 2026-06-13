@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import { getAbout, cmsImageUrl } from "@/lib/cms";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Über uns",
-  description: "TUNC AUTO — Premium-Autohaus. Erfahren Sie mehr über unsere Geschichte und Werte.",
-};
+export const metadata = pageMetadata.about;
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +13,12 @@ export default async function AboutPage() {
 
   return (
     <div>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Startseite", path: "/" },
+          { name: "Über uns", path: "/hakkimizda" },
+        ])}
+      />
       {imageUrl && (
         <div className="relative h-64 w-full overflow-hidden sm:h-96">
           <Image
@@ -36,7 +40,7 @@ export default async function AboutPage() {
         </h1>
         <div className="mt-8 whitespace-pre-wrap text-lg leading-relaxed text-zinc-400">
           {about?.content ??
-            "TUNC AUTO steht für Premium-Fahrzeuge, Transparenz und erstklassigen Service."}
+            "Tunc Automobile in Ahlen steht für Premium-Gebrauchtwagen, Transparenz und erstklassigen Service — für Kunden aus Hamm, Beckum und ganz Deutschland."}
         </div>
       </section>
     </div>

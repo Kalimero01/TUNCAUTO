@@ -3,6 +3,7 @@ import { SocialPlatformIcon } from "@/components/icons/social-icons";
 import { getCompany, getSocialLinks } from "@/lib/cms";
 import { SOCIAL_PLATFORM_LABELS } from "@/lib/social";
 import { publicNav } from "@/lib/i18n/de";
+import { SEO_CONFIG } from "@/lib/seo";
 
 export async function SiteFooter() {
   const [company, social] = await Promise.all([getCompany(), getSocialLinks()]);
@@ -14,7 +15,7 @@ export async function SiteFooter() {
           <div>
             <p className="text-sm font-semibold tracking-[0.2em] text-white">TUNC AUTO</p>
             <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              Premium-Autohaus — Eleganz, Vertrauen, Exzellenz.
+              {SEO_CONFIG.localTagline}
             </p>
           </div>
           <div>

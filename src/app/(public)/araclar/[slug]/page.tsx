@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { serializeVehicle } from "@/lib/api-helpers";
-import { formatPrice, getBaseUrl } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { VehicleDetailClient } from "@/components/vehicles/vehicle-detail-client";
+import { JsonLd } from "@/components/seo/json-ld";
+import {
+  buildBreadcrumbJsonLd,
+  buildVehicleJsonLd,
+  buildVehiclePageMetadata,
+} from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -16,10 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   if (!vehicle) return { title: "Fahrzeug nicht gefunden" };
 
-  const title = `${vehicle.make} ${vehicle.model}`;
-  const description = `${vehicle.make} ${vehicle.model} — ${formatPrice(vehicle.price.toString())}`;
-
-  return { title, description, openGraph: { title, description, type: "website" } };
+  return buildVehiclePageMetadata(
+    vehicle.make,
+    vehicle.model,
+    vehicle.year,
+    formatPrice(vehicle.price.toString()),
+    vehicle.slug
+  );
 }
 
 export default async function VehicleDetailPage({ params }: Props) {
@@ -35,36 +44,34 @@ export default async function VehicleDetailPage({ params }: Props) {
   if (!vehicle || vehicle.status !== "AVAILABLE") notFound();
 
   const data = serializeVehicle(vehicle);
-  const baseUrl = getBaseUrl();
+  const vehicleName = `${vehicle.make} ${vehicle.model}`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Car",
-    name: `${vehicle.make} ${vehicle.model}`,
-    brand: { "@type": "Brand", name: vehicle.make },
-    model: vehicle.model,
-    vehicleModelDate: vehicle.firstRegistration ?? String(vehicle.year),
-    offers: {
-      "@type": "Offer",
+  const structuredData = [
+    buildVehicleJsonLd({
+      make: vehicle.make,
+      model: vehicle.model,
+      slug: vehicle.slug,
+      year: vehicle.year,
       price: vehicle.price.toString(),
-      priceCurrency: "EUR",
-      availability: "https://schema.org/InStock",
-      url: `${baseUrl}/araclar/${vehicle.slug}`,
-    },
-    image: data.images.map((img) => `${baseUrl}${img.url}`),
-  };
+      firstRegistration: vehicle.firstRegistration,
+      images: data.images.map((img) => img.url),
+    }),
+    buildBreadcrumbJsonLd([
+      { name: "Startseite", path: "/" },
+      { name: "Fahrzeuge", path: "/araclar" },
+      { name: vehicleName, path: `/araclar/${vehicle.slug}` },
+    ]),
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={structuredData} />
       <VehicleDetailClient
         companyPhone={company?.phone}
         vehicle={{
           make: vehicle.make,
           model: vehicle.model,
+          year: vehicle.year,
           price: data.price,
           firstRegistration: vehicle.firstRegistration,
           mileage: vehicle.mileage,

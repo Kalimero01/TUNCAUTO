@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatMileage, formatPrice } from "@/lib/utils";
+import { vehicleImageAlt } from "@/lib/seo";
 
 export type VehicleListItem = {
   id: string;
@@ -29,7 +30,7 @@ export function VehicleListRow({ vehicle }: { vehicle: VehicleListItem }) {
         {image ? (
           <Image
             src={image.url}
-            alt={`${vehicle.make} ${vehicle.model}`}
+            alt={vehicleImageAlt(vehicle.make, vehicle.model, vehicle.year)}
             fill
             className="object-cover transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.02]"
             sizes="288px"

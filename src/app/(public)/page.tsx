@@ -1,11 +1,17 @@
 import { HeroSection, FeaturedVehicles, HomeTextBlocks } from "@/components/home/hero";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 
+export const metadata = pageMetadata.home;
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([{ name: "Startseite", path: "/" }]);
+
   return (
     <>
+      <JsonLd data={breadcrumbJsonLd} />
       <HeroSection />
       <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
         <div className="mb-12 text-center">

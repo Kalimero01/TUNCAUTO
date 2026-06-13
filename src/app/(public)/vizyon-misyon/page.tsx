@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import { getVisionMission, cmsImageUrl } from "@/lib/cms";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Vision & Mission",
-  description: "TUNC AUTO Vision und Mission — unsere Werte und Ziele.",
-};
+export const metadata = pageMetadata.visionMission;
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +13,12 @@ export default async function VisionMissionPage() {
 
   return (
     <div>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Startseite", path: "/" },
+          { name: "Vision & Mission", path: "/vizyon-misyon" },
+        ])}
+      />
       {imageUrl && (
         <div className="relative h-64 w-full overflow-hidden sm:h-96">
           <Image

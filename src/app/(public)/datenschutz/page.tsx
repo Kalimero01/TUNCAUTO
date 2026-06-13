@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
 import { getCompany } from "@/lib/cms";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Datenschutz",
-  robots: { index: true, follow: true },
-};
+export const metadata = pageMetadata.privacy;
 
 export const dynamic = "force-dynamic";
 

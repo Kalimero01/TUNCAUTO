@@ -1,7 +1,7 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/providers/session-provider";
-import { getBaseUrl } from "@/lib/utils";
+import { buildRootMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,28 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const baseUrl = getBaseUrl();
-
-export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
-  title: {
-    default: "TUNC AUTO | Premium-Automobile",
-    template: "%s | TUNC AUTO",
-  },
-  description:
-    "TUNC AUTO — Premium-Autohaus. Exklusive Fahrzeuge, Finanzierung und professioneller An- und Verkauf.",
-  openGraph: {
-    type: "website",
-    locale: "de_DE",
-    siteName: "TUNC AUTO",
-    title: "TUNC AUTO | Premium-Automobile",
-    description: "Exklusive Fahrzeuge. Vertrauen. Eleganz.",
-  },
-  robots: { index: true, follow: true },
-  icons: {
-    icon: "/favicon.svg",
-  },
-};
+export const metadata = buildRootMetadata();
 
 export const viewport: Viewport = {
   width: "device-width",

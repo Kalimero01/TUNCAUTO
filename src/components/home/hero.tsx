@@ -92,7 +92,7 @@ export async function HeroSection() {
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-zinc-400">
             {hero?.subtitle ?? heroText?.content ??
-              "Entdecken Sie unsere kuratierte Auswahl an Premium-Fahrzeugen oder verkaufen Sie Ihr Auto professionell."}
+              "Premium Gebrauchtwagen in Ahlen — für Kunden aus Hamm, Beckum und ganz Deutschland."}
           </p>
           <div className="mt-12 flex flex-wrap justify-center gap-4">
             <Link
