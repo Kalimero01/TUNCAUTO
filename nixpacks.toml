@@ -2,10 +2,10 @@
 nixPkgs = ["nodejs_22"]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["node scripts/railway-build.mjs"]
+cmds = ["npm run build"]
 
 [start]
-cmd = "node scripts/railway-start.mjs"
+cmd = "node scripts/start.mjs"

@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  SOLD
+  RESERVED
+}
+
+enum MessageSender {
+  ADMIN
+  SELLER
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  username           String   @unique
+  email              String   @unique
+  passwordHash       String
+  name               String?
+  role               UserRole @default(ADMIN)
+  mustChangePassword Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Vehicle {
+  id           String        @id @default(cuid())
+  make         String
+  model        String
+  year         Int
+  price        Decimal       @db.Decimal(12, 2)
+  mileage      Int?
+  fuelType     String?
+  transmission String?
+  color        String?
+  description  String?
+  features     String[]      @default([])
+  status       VehicleStatus @default(AVAILABLE)
+  slug         String        @unique
+  submissionId String?       @unique
+  submission   SellerSubmission? @relation(fields: [submissionId], references: [id])
+  files        FileUpload[]  @relation("VehicleFiles")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@map("vehicles")
+}
+
+model SellerSubmission {
+  id           String           @id @default(cuid())
+  sellerName   String
+  sellerEmail  String
+  sellerPhone  String?
+  make         String
+  model        String
+  year         Int
+  price        Decimal          @db.Decimal(12, 2)
+  mileage      Int?
+  fuelType     String?
+  transmission String?
+  color        String?
+  description  String?
+  status       SubmissionStatus @default(PENDING)
+  adminNotes   String?
+  vehicle      Vehicle?
+  files        FileUpload[]     @relation("SubmissionFiles")
+  chatMessages ChatMessage[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([status, createdAt])
+  @@map("seller_submissions")
+}
+
+model ChatMessage {
+  id           String           @id @default(cuid())
+  submissionId String
+  submission   SellerSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  senderType   MessageSender
+  senderName   String
+  content      String
+  isRead       Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+
+  @@index([submissionId, createdAt])
+  @@map("chat_messages")
+}
+
+model FileUpload {
+  id           String            @id @default(cuid())
+  originalName String
+  filename     String            @unique
+  mimeType     String
+  size         Int
+  type         FileType
+  vehicleId    String?
+  vehicle      Vehicle?          @relation("VehicleFiles", fields: [vehicleId], references: [id], onDelete: SetNull)
+  submissionId String?
+  submission   SellerSubmission? @relation("SubmissionFiles", fields: [submissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime          @default(now())
+
+  @@map("file_uploads")
+}

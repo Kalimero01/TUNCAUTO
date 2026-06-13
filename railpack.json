@@ -1,6 +1,9 @@
 {
-  "$schema": "https://schema.railpack.com",
+  "$schema": "https://railpack.com/schema.json",
+  "build": {
+    "buildCommand": "npm ci && npm run build"
+  },
   "deploy": {
-    "startCommand": "node scripts/railway-start.mjs"
+    "startCommand": "node scripts/start.mjs"
   }
 }
