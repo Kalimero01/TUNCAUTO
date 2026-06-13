@@ -1,3 +1,4 @@
+import { ContactMap } from "@/components/contact/contact-map";
 import { getCompany } from "@/lib/cms";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
@@ -26,7 +27,7 @@ export default async function ContactPage() {
         </p>
       </div>
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-2">
+      <div className="mt-12 grid min-w-0 gap-10 lg:grid-cols-2">
         <div className="space-y-8">
           <div>
             <h2 className="text-sm font-medium uppercase tracking-widest text-zinc-500">Adresse</h2>
@@ -46,20 +47,7 @@ export default async function ContactPage() {
           </div>
         </div>
 
-        {company?.mapEmbedUrl && (
-          <div className="overflow-hidden rounded-sm border border-zinc-800">
-            <iframe
-              src={company.mapEmbedUrl}
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Google Maps"
-            />
-          </div>
-        )}
+        <ContactMap embedUrl={company?.mapEmbedUrl} address={company?.address} />
       </div>
     </div>
   );

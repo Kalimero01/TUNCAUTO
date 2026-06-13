@@ -136,13 +136,20 @@ export default function AdminContactPage() {
           required
         />
         <div>
-          <label className="block text-sm text-zinc-400">Google Maps Embed URL</label>
+          <label className="block text-sm text-zinc-400">
+            Karten-Embed URL (optional)
+          </label>
           <input
             value={form.mapEmbedUrl}
             onChange={(e) => setForm((f) => ({ ...f, mapEmbedUrl: e.target.value }))}
             className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-            placeholder="https://www.google.com/maps/embed?pb=..."
+            placeholder="Leer lassen für OpenStreetMap (kostenlos)"
           />
+          <p className="mt-1 text-xs text-zinc-600">
+            Ohne Eintrag wird automatisch eine kostenlose OpenStreetMap-Karte mit Standortmarkierung
+            angezeigt. Optional kann hier eine eigene Embed-URL (z.&nbsp;B. Google Maps) hinterlegt
+            werden.
+          </p>
         </div>
         <button
           type="submit"
