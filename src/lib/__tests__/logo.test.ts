@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getLogoUrl } from "@/lib/logo";
+import { DEFAULT_LOGO_URL, getLogoUrl } from "@/lib/logo";
 
 describe("getLogoUrl", () => {
   it("returns default logo when no upload", () => {
-    expect(getLogoUrl(null)).toBe("/logo.png");
-    expect(getLogoUrl({ logoFile: null })).toBe("/logo.png");
+    expect(getLogoUrl(null)).toBe(DEFAULT_LOGO_URL);
+    expect(getLogoUrl({ logoFile: null })).toBe(DEFAULT_LOGO_URL);
   });
 
   it("returns upload path when logoFile is set", () => {

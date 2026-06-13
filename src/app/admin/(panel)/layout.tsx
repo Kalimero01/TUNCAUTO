@@ -19,7 +19,8 @@ export default async function AdminPanelLayout({ children }: { children: React.R
             href="/admin"
             logoUrl={logoUrl}
             alt={alt}
-            className="h-10 w-auto max-w-[140px] object-contain brightness-0 invert"
+            onDark
+            className="h-10 w-auto max-w-[140px] object-contain"
           />
         </div>
         <AdminNav />
@@ -43,7 +44,8 @@ export default async function AdminPanelLayout({ children }: { children: React.R
             href="/admin"
             logoUrl={logoUrl}
             alt={alt}
-            className="h-9 w-auto max-w-[120px] object-contain brightness-0 invert"
+            onDark
+            className="h-9 w-auto max-w-[120px] object-contain"
           />
           <AdminNav mobile />
         </header>

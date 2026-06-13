@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { IMAGE_ACCEPT, IMAGE_FORMAT_LABEL } from "@/lib/upload-constants";
+import { DEFAULT_LOGO_URL } from "@/lib/logo";
 
 export function LogoUploadSection({
   initialLogoUrl,
@@ -58,7 +59,7 @@ export function LogoUploadSection({
 
     setError(false);
     setMsg("Standard-Logo aktiv.");
-    setLogoUrl(json.data?.logoUrl ?? "/logo.png");
+    setLogoUrl(json.data?.logoUrl ?? DEFAULT_LOGO_URL);
   }
 
   return (

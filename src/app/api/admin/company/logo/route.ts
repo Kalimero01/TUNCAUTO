@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { jsonData, jsonError, requireAdmin } from "@/lib/api-helpers";
 import { saveUpload, deleteUploadFile } from "@/lib/uploads";
 import { isAllowedImageFile } from "@/lib/upload-constants";
+import { DEFAULT_LOGO_URL } from "@/lib/logo";
 
 export async function POST(request: NextRequest) {
   const authResult = await requireAdmin();
@@ -64,7 +65,7 @@ export async function DELETE() {
 
   const existing = await prisma.company.findUnique({ where: { id: "company" } });
   if (!existing?.logoFile) {
-    return jsonData({ logoFile: null, logoUrl: "/logo.png" });
+    return jsonData({ logoFile: null, logoUrl: DEFAULT_LOGO_URL });
   }
 
   await deleteUploadFile(existing.logoFile);
@@ -73,5 +74,5 @@ export async function DELETE() {
     data: { logoFile: null },
   });
 
-  return jsonData({ logoFile: company.logoFile, logoUrl: "/logo.png" });
+  return jsonData({ logoFile: company.logoFile, logoUrl: DEFAULT_LOGO_URL });
 }

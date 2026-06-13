@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import Image from "next/image";
+import { DEFAULT_LOGO_URL } from "@/lib/logo";
 
 function LoginForm() {
   const router = useRouter();
@@ -40,7 +41,7 @@ function LoginForm() {
       <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
         <div className="flex justify-center">
           <Image
-            src="/logo.png"
+            src={DEFAULT_LOGO_URL}
             alt="Tunc Automobile"
             width={180}
             height={72}
