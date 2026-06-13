@@ -32,6 +32,9 @@ export const metadata: Metadata = {
     description: "Kaliteli araçlar, güvenilir alım-satım.",
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
