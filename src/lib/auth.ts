@@ -24,7 +24,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "@auth/core/jwt" {
+declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     username: string;
@@ -95,14 +95,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        id: token.id as string,
-        username: token.username as string,
-        email: token.email as string,
-        name: session.user?.name ?? null,
-        mustChangePassword: Boolean(token.mustChangePassword),
+      return {
+        ...session,
+        user: {
+          id: token.id as string,
+          username: token.username as string,
+          email: token.email as string,
+          name: session.user?.name ?? null,
+          mustChangePassword: Boolean(token.mustChangePassword),
+        },
       };
-      return session;
     },
   },
   cookies: {
