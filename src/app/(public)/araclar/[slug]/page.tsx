@@ -7,6 +7,8 @@ import { formatMileage, formatPrice, getBaseUrl } from "@/lib/utils";
 
 type Props = { params: Promise<{ slug: string }> };
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const vehicle = await prisma.vehicle.findFirst({

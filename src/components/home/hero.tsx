@@ -4,12 +4,22 @@ import { VehicleCard } from "@/components/vehicles/vehicle-card";
 import { serializeVehicle } from "@/lib/api-helpers";
 
 export async function FeaturedVehicles() {
-  const vehicles = await prisma.vehicle.findMany({
-    where: { status: "AVAILABLE" },
-    include: { files: true },
-    orderBy: { createdAt: "desc" },
-    take: 6,
-  });
+  let vehicles: Awaited<ReturnType<typeof prisma.vehicle.findMany>> = [];
+
+  try {
+    vehicles = await prisma.vehicle.findMany({
+      where: { status: "AVAILABLE" },
+      include: { files: true },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    });
+  } catch {
+    return (
+      <div className="rounded-2xl border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
+        Araçlar yüklenemedi. Lütfen daha sonra tekrar deneyin.
+      </div>
+    );
+  }
 
   if (vehicles.length === 0) {
     return (

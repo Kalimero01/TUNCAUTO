@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: "TUNCAUTO araç ilanları — kaliteli ikinci el ve sıfır araçlar.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function VehiclesPage() {
   const vehicles = await prisma.vehicle.findMany({
     where: { status: "AVAILABLE" },

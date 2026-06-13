@@ -2,12 +2,20 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { getBaseUrl } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
-  const vehicles = await prisma.vehicle.findMany({
-    where: { status: "AVAILABLE" },
-    select: { slug: true, updatedAt: true },
-  });
+  let vehicles: Array<{ slug: string; updatedAt: Date }> = [];
+
+  try {
+    vehicles = await prisma.vehicle.findMany({
+      where: { status: "AVAILABLE" },
+      select: { slug: true, updatedAt: true },
+    });
+  } catch {
+    // DB may be unavailable during CI build
+  }
 
   return [
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
