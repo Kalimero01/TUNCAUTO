@@ -7,6 +7,16 @@ if (isProduction) {
   pushArgs.push("--accept-data-loss");
 }
 
+console.log("[start] Preparing database for migration...");
+try {
+  execSync("node scripts/pre-migrate.mjs", { stdio: "inherit", timeout: 60_000 });
+} catch (error) {
+  console.error("[start] Pre-migration failed.", error?.message);
+  if (isProduction) {
+    process.exit(1);
+  }
+}
+
 console.log("[start] Running database migrations...");
 try {
   execSync(`npx prisma db push ${pushArgs.join(" ")}`, { stdio: "inherit", timeout: 120_000 });
