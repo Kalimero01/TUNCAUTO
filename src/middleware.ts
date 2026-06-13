@@ -1,11 +1,10 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 
-const publicAdminPaths = ["/admin/login", "/admin/change-password"];
+export const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  const isAdminRoute = pathname.startsWith("/admin");
   const isApiAdminRoute =
     pathname.startsWith("/api/admin") ||
     (pathname.startsWith("/api/vehicles") &&
@@ -13,37 +12,9 @@ export default auth((req) => {
     (pathname.startsWith("/api/submissions") && req.method !== "POST") ||
     pathname.startsWith("/api/chat/admin");
 
-  if (isAdminRoute) {
-    const isLoggedIn = Boolean(req.auth);
-    const mustChangePassword = req.auth?.user?.mustChangePassword;
-
-    if (!isLoggedIn && !publicAdminPaths.includes(pathname)) {
-      return NextResponse.redirect(new URL("/admin/login", req.url));
-    }
-
-    if (
-      isLoggedIn &&
-      mustChangePassword &&
-      pathname !== "/admin/change-password" &&
-      pathname !== "/admin/login"
-    ) {
-      return NextResponse.redirect(new URL("/admin/change-password", req.url));
-    }
-
-    if (isLoggedIn && !mustChangePassword && pathname === "/admin/change-password") {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    }
-
-    if (isLoggedIn && pathname === "/admin/login") {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    }
-  }
-
   if (isApiAdminRoute && !req.auth) {
-    return NextResponse.json({ error: "Yetkisiz erişim." }, { status: 401 });
+    return Response.json({ error: "Yetkisiz erişim." }, { status: 401 });
   }
-
-  return NextResponse.next();
 });
 
 export const config = {
