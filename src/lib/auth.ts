@@ -99,7 +99,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         id: token.id as string,
         username: token.username as string,
         email: token.email as string,
-        name: session.user?.name,
+        name: session.user?.name ?? null,
         mustChangePassword: Boolean(token.mustChangePassword),
       };
       return session;
