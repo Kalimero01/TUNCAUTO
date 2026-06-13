@@ -1,44 +1,86 @@
 # TUNCAUTO
 
-Full-stack monorepo for the Tuncauto platform.
+Premium araç galerisi ve bayi yönetim platformu — birleşik Next.js uygulaması.
 
-## Structure
+## Mimari
 
 ```
 TUNCAUTO/
-├── frontend/   Next.js 16 + Tailwind
-├── backend/    Express API + Prisma
-└── docker-compose.yml   Local PostgreSQL
+├── prisma/          PostgreSQL şeması + seed
+├── src/
+│   ├── app/
+│   │   ├── (public)/    Halka açık site
+│   │   ├── admin/       Yönetim paneli
+│   │   └── api/         REST API route handlers
+│   ├── components/
+│   └── lib/             Auth, Prisma, validasyon, upload
+├── uploads/             Dosya depolama (Railway volume)
+└── railway.json         Tek servis deploy
 ```
 
-## Quick start
+**Stack:** Next.js 15 · TypeScript · PostgreSQL · Prisma · Tailwind CSS · Auth.js (NextAuth v5)
+
+## Hızlı Başlangıç
 
 ```bash
 cp .env.example .env
-docker compose up -d          # PostgreSQL (requires Docker)
+docker compose up -d
 npm install
-npm run db:push               # Apply schema
-npm run dev                   # Frontend :3000 + Backend :4000
+npm run db:push
+npm run db:seed
+npm run dev
 ```
 
-## API endpoints
+Uygulama: http://localhost:3000  
+Admin: http://localhost:3000/admin/login
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/health` | API status |
-| GET | `/api/health/ready` | DB connectivity |
-| GET | `/api/vehicles` | List vehicles |
-| POST | `/api/vehicles` | Create vehicle |
-| GET | `/api/vehicles/:id` | Get vehicle |
-| PATCH | `/api/vehicles/:id` | Update vehicle |
-| DELETE | `/api/vehicles/:id` | Delete vehicle |
+### Varsayılan Admin
 
-## Deploy (Railway)
+| Alan | Değer |
+|------|-------|
+| Kullanıcı adı | `admin` |
+| Şifre | `ChangeMeImmediately123!` |
 
-| Service | URL |
-|---------|-----|
-| Frontend | https://frontend-production-5cf5.up.railway.app |
-| Backend API | https://backend-production-31c8.up.railway.app |
-| Database | PostgreSQL (Postgres service) |
+İlk girişte şifre değiştirme zorunludur.
 
-Project: **Tuncauto** — push to `main` triggers auto-deploy for backend and frontend.
+## Komutlar
+
+| Komut | Açıklama |
+|-------|----------|
+| `npm run dev` | Geliştirme sunucusu |
+| `npm run build` | Production build |
+| `npm run start` | Production sunucu (+ migrate + seed) |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript kontrol |
+| `npm run test` | Vitest testleri |
+| `npm run db:push` | Şemayı uygula |
+| `npm run db:seed` | Admin kullanıcı seed |
+| `npm run db:studio` | Prisma Studio |
+
+## Özellikler
+
+- **Halka açık site:** Araç listeleme/detay, satıcı başvuru formu, SEO
+- **Admin panel:** Auth, dashboard, araç CRUD, başvuru onay/red, chat, şifre yönetimi
+- **API:** Vehicles, submissions, chat, uploads, health
+- **Güvenlik:** bcrypt, rate limiting, CSRF (Auth.js), input sanitization, secure cookies
+- **Dosya yükleme:** Görsel (10MB) ve video (100MB) validasyonu
+
+## Ortam Değişkenleri
+
+`.env.example` dosyasına bakın. Zorunlu alanlar:
+
+- `DATABASE_URL` — PostgreSQL bağlantı dizesi
+- `AUTH_SECRET` — Auth.js gizli anahtar (min 32 karakter)
+- `NEXTAUTH_URL` — Uygulama URL'si
+
+Opsiyonel:
+
+- `UPLOAD_DIR` — Dosya depolama yolu (varsayılan: `./uploads`)
+
+## Deploy
+
+Detaylar için [DEPLOYMENT.md](./DEPLOYMENT.md) dosyasına bakın.
+
+## Lisans
+
+Proprietary — TUNCAUTO

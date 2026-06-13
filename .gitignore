@@ -3,6 +3,7 @@ dist/
 .next/
 out/
 build/
+uploads/
 .env
 .env.local
 .env.*.local
@@ -12,6 +13,6 @@ coverage/
 .turbo/
 .vercel/
 *.tsbuildinfo
-backend/prisma/*.db
-backend/prisma/*.db-journal
 .railway-config-pull-*/
+backend/
+frontend/

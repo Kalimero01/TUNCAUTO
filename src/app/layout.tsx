@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
+import { SessionProvider } from "@/components/providers/session-provider";
 import { getBaseUrl } from "@/lib/utils";
 import "./globals.css";
 
@@ -38,10 +37,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100 antialiased">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+      <body className="min-h-full bg-zinc-950 text-zinc-100 antialiased">
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );

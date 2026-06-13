@@ -30,6 +30,7 @@
     "zod": "^3.25.36"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.21",
@@ -46,5 +47,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
