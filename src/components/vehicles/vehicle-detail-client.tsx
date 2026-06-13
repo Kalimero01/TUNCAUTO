@@ -103,6 +103,21 @@ export function VehicleDetailClient({ vehicle }: { vehicle: VehicleData }) {
             </div>
           )}
 
+          {vehicle.features.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-sm font-medium uppercase tracking-widest text-zinc-500">
+                Technische Daten
+              </h2>
+              <ul className="mt-4 space-y-2">
+                {vehicle.features.map((item) => (
+                  <li key={item} className="text-sm text-zinc-400">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {vehicle.description && (
             <div className="mt-10">
               <h2 className="text-sm font-medium uppercase tracking-widest text-zinc-500">Beschreibung</h2>

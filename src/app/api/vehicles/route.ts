@@ -39,27 +39,8 @@ export async function POST(request: NextRequest) {
 
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
-    const equipmentRaw = formData.get("equipment");
-    const equipment =
-      typeof equipmentRaw === "string"
-        ? equipmentRaw.split("\n").map((s) => s.trim()).filter(Boolean)
-        : [];
-
-    const body = {
-      make: formData.get("make"),
-      model: formData.get("model"),
-      year: formData.get("year"),
-      price: formData.get("price"),
-      mileage: formData.get("mileage") || null,
-      fuelType: formData.get("fuelType") || null,
-      transmission: formData.get("transmission") || null,
-      horsepower: formData.get("horsepower") || null,
-      color: formData.get("color") || null,
-      description: formData.get("description") || null,
-      financingOffer: formData.get("financingOffer") || null,
-      financingUrl: formData.get("financingUrl") || null,
-      equipment,
-    };
+    const { parseVehicleFormBody } = await import("@/lib/vehicle-helpers");
+    const body = parseVehicleFormBody(formData);
 
     const parsed = vehicleSchema.safeParse(body);
     if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
@@ -74,6 +55,7 @@ export async function POST(request: NextRequest) {
         financingUrl: vehicleData.financingUrl || null,
         slug,
         features: parsed.data.features ?? [],
+        status: parsed.data.status ?? "AVAILABLE",
         equipment: {
           create: (equipList ?? []).map((name, i) => ({ name, sortOrder: i })),
         },

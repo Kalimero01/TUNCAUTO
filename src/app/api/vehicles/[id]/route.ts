@@ -67,6 +67,18 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   if (authResult instanceof Response) return authResult;
 
   const { id } = await params;
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id },
+    include: { files: true },
+  });
+
+  if (!vehicle) return jsonError("Araç bulunamadı.", 404);
+
+  const { deleteUploadFile } = await import("@/lib/uploads");
+  for (const file of vehicle.files) {
+    await deleteUploadFile(file.filename);
+  }
+
   await prisma.vehicle.delete({ where: { id } });
   return new Response(null, { status: 204 });
 }

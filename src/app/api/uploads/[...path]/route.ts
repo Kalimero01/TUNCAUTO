@@ -1,16 +1,15 @@
-import path from "node:path";
-import { readFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { UPLOAD_DIR } from "@/lib/uploads";
 
 type Params = { params: Promise<{ path: string[] }> };
 
-const MIME: Record<string, string> = {
+const MIME_TYPES: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
-  ".gif": "image/gif",
   ".mp4": "video/mp4",
   ".webm": "video/webm",
   ".mov": "video/quicktime",
@@ -18,24 +17,27 @@ const MIME: Record<string, string> = {
 
 export async function GET(_request: NextRequest, { params }: Params) {
   const { path: segments } = await params;
-  const filename = segments.join("/");
-
-  if (!filename || filename.includes("..")) {
-    return NextResponse.json({ error: "Geçersiz dosya." }, { status: 400 });
+  if (!segments?.length) {
+    return NextResponse.json({ error: "Datei nicht gefunden." }, { status: 404 });
   }
 
-  const filePath = path.join(UPLOAD_DIR, filename);
+  const relative = segments.join("/");
+  if (relative.includes("..") || relative.startsWith("/")) {
+    return NextResponse.json({ error: "Ungültiger Pfad." }, { status: 400 });
+  }
+
+  const filePath = path.join(UPLOAD_DIR, relative);
   const resolved = path.resolve(filePath);
   const uploadRoot = path.resolve(UPLOAD_DIR);
 
-  if (!resolved.startsWith(uploadRoot)) {
-    return NextResponse.json({ error: "Geçersiz dosya yolu." }, { status: 400 });
+  if (!resolved.startsWith(uploadRoot + path.sep) && resolved !== uploadRoot) {
+    return NextResponse.json({ error: "Ungültiger Pfad." }, { status: 400 });
   }
 
   try {
     const buffer = await readFile(resolved);
     const ext = path.extname(resolved).toLowerCase();
-    const contentType = MIME[ext] ?? "application/octet-stream";
+    const contentType = MIME_TYPES[ext] ?? "application/octet-stream";
 
     return new NextResponse(buffer, {
       headers: {
@@ -44,6 +46,6 @@ export async function GET(_request: NextRequest, { params }: Params) {
       },
     });
   } catch {
-    return NextResponse.json({ error: "Dosya bulunamadı." }, { status: 404 });
+    return NextResponse.json({ error: "Datei nicht gefunden." }, { status: 404 });
   }
 }

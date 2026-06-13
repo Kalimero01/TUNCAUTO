@@ -118,6 +118,7 @@ function formatFile(file: {
   mimeType: string;
   type: string;
   originalName: string;
+  sortOrder?: number;
 }) {
   return {
     id: file.id,
@@ -125,5 +126,6 @@ function formatFile(file: {
     mimeType: file.mimeType,
     type: file.type,
     originalName: file.originalName,
+    sortOrder: file.sortOrder ?? 0,
   };
 }
