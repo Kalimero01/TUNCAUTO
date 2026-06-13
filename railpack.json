@@ -1,7 +1,13 @@
 {
-  "$schema": "https://railpack.com/schema.json",
-  "build": {
-    "buildCommand": "npm run build"
+  "$schema": "https://schema.railpack.com",
+  "steps": {
+    "install": {
+      "commands": ["npm install"]
+    },
+    "build": {
+      "inputs": [{ "step": "install" }],
+      "commands": ["...", "npm run build"]
+    }
   },
   "deploy": {
     "startCommand": "node scripts/start.mjs"
