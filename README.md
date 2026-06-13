@@ -35,4 +35,10 @@ npm run dev                   # Frontend :3000 + Backend :4000
 
 ## Deploy (Railway)
 
-Project: **Tuncauto** — PostgreSQL + backend + frontend services linked to GitHub.
+| Service | URL |
+|---------|-----|
+| Frontend | https://frontend-production-5cf5.up.railway.app |
+| Backend API | https://backend-production-31c8.up.railway.app |
+| Database | PostgreSQL (Postgres service) |
+
+Project: **Tuncauto** — push to `main` triggers auto-deploy for backend and frontend.

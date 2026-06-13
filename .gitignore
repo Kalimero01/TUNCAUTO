@@ -14,3 +14,4 @@ coverage/
 *.tsbuildinfo
 backend/prisma/*.db
 backend/prisma/*.db-journal
+.railway-config-pull-*/
