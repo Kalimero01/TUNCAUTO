@@ -48,10 +48,11 @@ export async function getHomeTexts() {
 
 export async function getSocialLinks() {
   try {
-    return await prisma.socialLink.findMany({
+    const links = await prisma.socialLink.findMany({
       where: { isActive: true },
       orderBy: { platform: "asc" },
     });
+    return links.filter((link) => link.url.trim() !== "");
   } catch {
     return [];
   }

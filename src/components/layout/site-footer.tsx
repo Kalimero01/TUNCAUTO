@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { SocialPlatformIcon } from "@/components/icons/social-icons";
 import { getCompany, getSocialLinks } from "@/lib/cms";
+import { SOCIAL_PLATFORM_LABELS } from "@/lib/social";
 import { publicNav } from "@/lib/i18n/de";
 
 export async function SiteFooter() {
@@ -27,19 +29,24 @@ export async function SiteFooter() {
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Social Media</p>
-            <div className="mt-4 flex flex-col gap-2 text-sm">
-              {social.map((s) => (
-                <a
-                  key={s.id}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-zinc-400 hover:text-metallic"
-                >
-                  {s.platform === "INSTAGRAM" ? "Instagram" : "TikTok"}
-                </a>
-              ))}
-            </div>
+            {social.length > 0 ? (
+              <div className="mt-4 flex gap-4">
+                {social.map((s) => (
+                  <a
+                    key={s.id}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={SOCIAL_PLATFORM_LABELS[s.platform as keyof typeof SOCIAL_PLATFORM_LABELS] ?? s.platform}
+                    className="text-zinc-400 transition-colors hover:text-metallic"
+                  >
+                    <SocialPlatformIcon platform={s.platform} className="h-5 w-5" />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-zinc-600">—</p>
+            )}
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Kontakt</p>

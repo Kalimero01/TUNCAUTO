@@ -99,10 +99,20 @@ Jedes Fahrzeug mit höchster Sorgfalt auszuwählen, faire Preise zu bieten und u
   if (socialCount === 0) {
     await prisma.socialLink.createMany({
       data: [
-        { platform: "INSTAGRAM", url: "https://instagram.com/tuncauto", isActive: true },
-        { platform: "TIKTOK", url: "https://tiktok.com/@tuncauto", isActive: true },
+        { platform: "FACEBOOK", url: "", isActive: false },
+        { platform: "INSTAGRAM", url: "", isActive: false },
+        { platform: "TIKTOK", url: "", isActive: false },
       ],
     });
+  } else {
+    const existing = await prisma.socialLink.findMany({ select: { platform: true } });
+    const platforms = new Set(existing.map((s) => s.platform));
+    const missing = (["FACEBOOK", "INSTAGRAM", "TIKTOK"] as const).filter((p) => !platforms.has(p));
+    if (missing.length > 0) {
+      await prisma.socialLink.createMany({
+        data: missing.map((platform) => ({ platform, url: "", isActive: false })),
+      });
+    }
   }
 
   const textCount = await prisma.homeText.count();

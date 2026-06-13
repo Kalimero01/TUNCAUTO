@@ -116,8 +116,13 @@ export const companySchema = z.object({
 });
 
 export const socialLinkSchema = z.object({
-  platform: z.enum(["INSTAGRAM", "TIKTOK"]),
-  url: z.string().url().max(500),
+  platform: z.enum(["FACEBOOK", "INSTAGRAM", "TIKTOK"]),
+  url: z
+    .string()
+    .max(500)
+    .refine((val) => val === "" || /^https?:\/\/.+/.test(val), {
+      message: "Ungültige URL",
+    }),
   isActive: z.coerce.boolean().optional(),
 });
 

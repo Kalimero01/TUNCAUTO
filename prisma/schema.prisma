@@ -34,6 +34,7 @@ enum FileType {
 }
 
 enum SocialPlatform {
+  FACEBOOK
   INSTAGRAM
   TIKTOK
 }
@@ -245,9 +246,9 @@ model Company {
 
 model SocialLink {
   id       String         @id @default(cuid())
-  platform SocialPlatform
-  url      String
-  isActive Boolean        @default(true)
+  platform SocialPlatform @unique
+  url      String         @default("")
+  isActive Boolean        @default(false)
 
   @@map("social_links")
 }
