@@ -16,20 +16,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   if (!vehicle) return { title: "Fahrzeug nicht gefunden" };
 
-  const title = `${vehicle.make} ${vehicle.model} ${vehicle.year}`;
-  const description =
-    vehicle.description?.slice(0, 160) ??
-    `${vehicle.year} ${vehicle.make} ${vehicle.model} — ${formatPrice(vehicle.price.toString())}`;
+  const title = `${vehicle.make} ${vehicle.model}`;
+  const description = `${vehicle.make} ${vehicle.model} — ${formatPrice(vehicle.price.toString())}`;
 
   return { title, description, openGraph: { title, description, type: "website" } };
 }
 
 export default async function VehicleDetailPage({ params }: Props) {
   const { slug } = await params;
-  const vehicle = await prisma.vehicle.findFirst({
-    where: { OR: [{ slug }, { id: slug }] },
-    include: { files: true, equipment: true },
-  });
+  const [vehicle, company] = await Promise.all([
+    prisma.vehicle.findFirst({
+      where: { OR: [{ slug }, { id: slug }] },
+      include: { files: true, equipment: true },
+    }),
+    prisma.company.findUnique({ where: { id: "company" } }),
+  ]);
 
   if (!vehicle || vehicle.status !== "AVAILABLE") notFound();
 
@@ -42,7 +43,7 @@ export default async function VehicleDetailPage({ params }: Props) {
     name: `${vehicle.make} ${vehicle.model}`,
     brand: { "@type": "Brand", name: vehicle.make },
     model: vehicle.model,
-    vehicleModelDate: String(vehicle.year),
+    vehicleModelDate: vehicle.firstRegistration ?? String(vehicle.year),
     offers: {
       "@type": "Offer",
       price: vehicle.price.toString(),
@@ -60,21 +61,24 @@ export default async function VehicleDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <VehicleDetailClient
+        companyPhone={company?.phone}
         vehicle={{
           make: vehicle.make,
           model: vehicle.model,
-          year: vehicle.year,
           price: data.price,
+          firstRegistration: vehicle.firstRegistration,
           mileage: vehicle.mileage,
           fuelType: vehicle.fuelType,
           transmission: vehicle.transmission,
           horsepower: vehicle.horsepower,
-          color: vehicle.color,
-          description: vehicle.description,
-          financingOffer: vehicle.financingOffer,
+          engineDisplacement: vehicle.engineDisplacement,
+          exteriorColor: data.exteriorColor ?? null,
+          interiorColor: vehicle.interiorColor,
+          upholstery: vehicle.upholstery,
+          doors: vehicle.doors,
+          seats: vehicle.seats,
           financingUrl: vehicle.financingUrl,
-          equipment: data.equipment,
-          features: vehicle.features,
+          equipmentFeatures: data.equipmentFeatures,
           images: data.images,
           videos: data.videos,
         }}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { VehicleForm, type VehicleFormValues } from "@/components/admin/vehicle-form";
+import { splitFirstRegistration } from "@/lib/vehicle-constants";
 
 type VehicleData = VehicleFormValues & { id: string; slug: string };
 
@@ -22,23 +23,27 @@ export default function AdminVehicleEditPage() {
       return;
     }
     const v = json.data;
+    const firstReg = splitFirstRegistration(v.firstRegistration);
     setVehicle({
       id: v.id,
       slug: v.slug,
       make: v.make,
       model: v.model,
-      year: v.year,
       price: v.price,
+      firstRegistrationMonth: firstReg.month,
+      firstRegistrationYear: firstReg.year,
       mileage: v.mileage != null ? String(v.mileage) : "",
       horsepower: v.horsepower != null ? String(v.horsepower) : "",
+      engineDisplacement: v.engineDisplacement != null ? String(v.engineDisplacement) : "",
       fuelType: v.fuelType ?? "",
       transmission: v.transmission ?? "",
-      color: v.color ?? "",
+      exteriorColor: v.exteriorColor ?? "",
+      interiorColor: v.interiorColor ?? "",
+      upholstery: v.upholstery ?? "",
+      doors: v.doors ?? "",
+      seats: v.seats != null ? String(v.seats) : "",
       financingUrl: v.financingUrl ?? "",
-      financingOffer: v.financingOffer ?? "",
-      description: v.description ?? "",
-      equipment: (v.equipment ?? []).join("\n"),
-      features: (v.features ?? []).join("\n"),
+      equipmentFeatures: v.equipmentFeatures ?? v.equipment ?? [],
       status: v.status,
       images: v.images ?? [],
     });
@@ -60,7 +65,7 @@ export default function AdminVehicleEditPage() {
       </Link>
       <div className="mt-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">
-          Bearbeiten: {vehicle.make} {vehicle.model} ({vehicle.year})
+          Bearbeiten: {vehicle.make} {vehicle.model}
         </h1>
         <Link
           href={`/araclar/${vehicle.slug}`}

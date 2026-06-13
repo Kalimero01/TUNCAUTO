@@ -26,15 +26,23 @@ export function serializeVehicle(vehicle: {
   model: string;
   year: number;
   price: { toString(): string } | number;
+  firstRegistration?: string | null;
   mileage: number | null;
   fuelType: string | null;
   transmission: string | null;
   horsepower: number | null;
+  engineDisplacement?: number | null;
+  exteriorColor?: string | null;
+  interiorColor?: string | null;
+  upholstery?: string | null;
+  doors?: string | null;
+  seats?: number | null;
   color: string | null;
   description: string | null;
   financingOffer: string | null;
   financingUrl: string | null;
   features: string[];
+  equipmentFeatures?: string[];
   status: string;
   slug: string;
   createdAt: Date;
@@ -56,12 +64,20 @@ export function serializeVehicle(vehicle: {
       .slice(0, 10)
       .map(formatFile) ?? [];
 
+  const legacyEquipment = vehicle.equipment?.sort((a, b) => a.sortOrder - b.sortOrder).map((e) => e.name) ?? [];
+  const equipmentFeatures =
+    vehicle.equipmentFeatures && vehicle.equipmentFeatures.length > 0
+      ? vehicle.equipmentFeatures
+      : legacyEquipment;
+
   return {
     ...vehicle,
     price: vehicle.price.toString(),
+    exteriorColor: vehicle.exteriorColor ?? vehicle.color,
     images,
     videos: vehicle.files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
-    equipment: vehicle.equipment?.sort((a, b) => a.sortOrder - b.sortOrder).map((e) => e.name) ?? [],
+    equipmentFeatures,
+    equipment: equipmentFeatures,
     files: undefined,
   };
 }

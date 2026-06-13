@@ -47,18 +47,28 @@ export async function POST(request: NextRequest) {
 
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);
-    const { equipment: equipList, ...vehicleData } = parsed.data;
 
     const vehicle = await prisma.vehicle.create({
       data: {
-        ...vehicleData,
-        financingUrl: vehicleData.financingUrl || null,
-        slug,
-        features: parsed.data.features ?? [],
+        make: parsed.data.make,
+        model: parsed.data.model,
+        year: parsed.data.year,
+        price: parsed.data.price,
+        firstRegistration: parsed.data.firstRegistration || null,
+        mileage: parsed.data.mileage ?? null,
+        fuelType: parsed.data.fuelType || null,
+        transmission: parsed.data.transmission || null,
+        horsepower: parsed.data.horsepower ?? null,
+        engineDisplacement: parsed.data.engineDisplacement ?? null,
+        exteriorColor: parsed.data.exteriorColor || null,
+        interiorColor: parsed.data.interiorColor || null,
+        upholstery: parsed.data.upholstery || null,
+        doors: parsed.data.doors || null,
+        seats: parsed.data.seats ?? null,
+        financingUrl: parsed.data.financingUrl || null,
+        equipmentFeatures: parsed.data.equipmentFeatures ?? [],
         status: parsed.data.status ?? "AVAILABLE",
-        equipment: {
-          create: (equipList ?? []).map((name, i) => ({ name, sortOrder: i })),
-        },
+        slug,
       },
       include: { files: true, equipment: true },
     });
@@ -88,17 +98,28 @@ export async function POST(request: NextRequest) {
 
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
   const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);
-  const { equipment: equipList, ...vehicleData } = parsed.data;
 
   const vehicle = await prisma.vehicle.create({
     data: {
-      ...vehicleData,
-      financingUrl: vehicleData.financingUrl || null,
+      make: parsed.data.make,
+      model: parsed.data.model,
+      year: parsed.data.year,
+      price: parsed.data.price,
+      firstRegistration: parsed.data.firstRegistration || null,
+      mileage: parsed.data.mileage ?? null,
+      fuelType: parsed.data.fuelType || null,
+      transmission: parsed.data.transmission || null,
+      horsepower: parsed.data.horsepower ?? null,
+      engineDisplacement: parsed.data.engineDisplacement ?? null,
+      exteriorColor: parsed.data.exteriorColor || null,
+      interiorColor: parsed.data.interiorColor || null,
+      upholstery: parsed.data.upholstery || null,
+      doors: parsed.data.doors || null,
+      seats: parsed.data.seats ?? null,
+      financingUrl: parsed.data.financingUrl || null,
+      equipmentFeatures: parsed.data.equipmentFeatures ?? [],
+      status: parsed.data.status ?? "AVAILABLE",
       slug,
-      features: parsed.data.features ?? [],
-      equipment: {
-        create: (equipList ?? []).map((name, i) => ({ name, sortOrder: i })),
-      },
     },
     include: { files: true, equipment: true },
   });

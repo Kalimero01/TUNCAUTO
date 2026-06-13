@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ALL_EQUIPMENT_FEATURES, FUEL_TYPES, TRANSMISSION_TYPES } from "@/lib/vehicle-constants";
 
 export const loginSchema = z.object({
   login: z.string().min(1, "Kullanıcı adı veya e-posta gerekli."),
@@ -21,16 +22,31 @@ export const vehicleSchema = z.object({
   model: z.string().min(1).max(100),
   year: z.coerce.number().int().min(1900).max(new Date().getFullYear() + 1),
   price: z.coerce.number().positive(),
+  firstRegistration: z
+    .string()
+    .regex(/^\d{1,2}\/\d{4}$/, "Format: MM/YYYY")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   mileage: z.coerce.number().int().min(0).optional().nullable(),
-  fuelType: z.string().max(50).optional().nullable(),
-  transmission: z.string().max(50).optional().nullable(),
+  fuelType: z.enum(FUEL_TYPES as unknown as [string, ...string[]]).optional().nullable().or(z.literal("")),
+  transmission: z
+    .enum(TRANSMISSION_TYPES as unknown as [string, ...string[]])
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   horsepower: z.coerce.number().int().min(0).optional().nullable(),
-  color: z.string().max(50).optional().nullable(),
-  description: z.string().max(10000).optional().nullable(),
-  financingOffer: z.string().max(5000).optional().nullable(),
+  engineDisplacement: z.coerce.number().int().min(0).optional().nullable(),
+  exteriorColor: z.string().max(50).optional().nullable(),
+  interiorColor: z.string().max(50).optional().nullable(),
+  upholstery: z.string().max(50).optional().nullable(),
+  doors: z.string().max(20).optional().nullable(),
+  seats: z.coerce.number().int().min(1).max(20).optional().nullable(),
   financingUrl: z.string().url().max(500).optional().nullable().or(z.literal("")),
-  features: z.array(z.string().max(100)).max(50).optional(),
-  equipment: z.array(z.string().max(100)).max(100).optional(),
+  equipmentFeatures: z
+    .array(z.enum(ALL_EQUIPMENT_FEATURES as unknown as [string, ...string[]]))
+    .max(ALL_EQUIPMENT_FEATURES.length)
+    .optional(),
   status: z.enum(["AVAILABLE", "SOLD", "RESERVED"]).optional(),
 });
 

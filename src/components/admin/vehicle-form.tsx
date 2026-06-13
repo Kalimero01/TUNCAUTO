@@ -2,6 +2,16 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import {
+  ALL_EQUIPMENT_FEATURES,
+  CAR_BRANDS,
+  EQUIPMENT_FEATURES_COL1,
+  EQUIPMENT_FEATURES_COL2,
+  EQUIPMENT_FEATURES_COL3,
+  FUEL_TYPES,
+  splitFirstRegistration,
+  TRANSMISSION_TYPES,
+} from "@/lib/vehicle-constants";
 
 export type VehicleImage = {
   id: string;
@@ -12,18 +22,21 @@ export type VehicleImage = {
 export type VehicleFormValues = {
   make: string;
   model: string;
-  year: number;
   price: string;
+  firstRegistrationMonth: string;
+  firstRegistrationYear: string;
   mileage: string;
   horsepower: string;
+  engineDisplacement: string;
   fuelType: string;
   transmission: string;
-  color: string;
+  exteriorColor: string;
+  interiorColor: string;
+  upholstery: string;
+  doors: string;
+  seats: string;
   financingUrl: string;
-  financingOffer: string;
-  description: string;
-  equipment: string;
-  features: string;
+  equipmentFeatures: string[];
   status: string;
   images: VehicleImage[];
 };
@@ -41,7 +54,27 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
   const [imageLoading, setImageLoading] = useState(false);
   const [error, setError] = useState("");
   const [images, setImages] = useState<VehicleImage[]>(initial?.images ?? []);
+  const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
+    new Set(initial?.equipmentFeatures ?? [])
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const firstReg = splitFirstRegistration(
+    initial?.firstRegistrationMonth && initial?.firstRegistrationYear
+      ? `${initial.firstRegistrationMonth}/${initial.firstRegistrationYear}`
+      : initial?.firstRegistrationMonth
+        ? `${initial.firstRegistrationMonth}/${initial.firstRegistrationYear ?? ""}`
+        : undefined
+  );
+
+  function toggleFeature(feature: string) {
+    setSelectedFeatures((prev) => {
+      const next = new Set(prev);
+      if (next.has(feature)) next.delete(feature);
+      else next.add(feature);
+      return next;
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -49,6 +82,10 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
     setError("");
 
     const formData = new FormData(e.currentTarget);
+    formData.delete("equipmentFeatures");
+    for (const feature of selectedFeatures) {
+      formData.append("equipmentFeatures", feature);
+    }
 
     if (mode === "create") {
       const newImages = fileInputRef.current?.files;
@@ -167,71 +204,146 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
     <form
       onSubmit={handleSubmit}
       encType="multipart/form-data"
-      className="mt-6 grid gap-4 rounded-sm border border-zinc-800 p-6 sm:grid-cols-2"
+      className="mt-6 space-y-8 rounded-sm border border-zinc-800 p-6"
     >
-      <Field name="make" label="Marke" defaultValue={initial?.make} required />
-      <Field name="model" label="Modell" defaultValue={initial?.model} required />
-      <Field name="year" label="Baujahr" type="number" defaultValue={initial?.year} required />
-      <Field name="price" label="Preis (€)" type="number" step="0.01" defaultValue={initial?.price} required />
-      <Field name="mileage" label="KM" type="number" defaultValue={initial?.mileage} />
-      <Field name="horsepower" label="PS" type="number" defaultValue={initial?.horsepower} />
-      <Field name="fuelType" label="Kraftstoff" defaultValue={initial?.fuelType} />
-      <Field name="transmission" label="Getriebe" defaultValue={initial?.transmission} />
-      <Field name="color" label="Farbe" defaultValue={initial?.color} />
-      <Field name="financingUrl" label="mobile.de Finanzierungs-URL" type="url" defaultValue={initial?.financingUrl} />
-      <div>
-        <label className="block text-sm text-zinc-400">Status</label>
-        <select
-          name="status"
-          defaultValue={initial?.status ?? "AVAILABLE"}
-          className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-        >
-          <option value="AVAILABLE">Verfügbar (veröffentlicht)</option>
-          <option value="RESERVED">Reserviert</option>
-          <option value="SOLD">Verkauft</option>
-        </select>
-      </div>
-      <div className="sm:col-span-2">
-        <label className="block text-sm text-zinc-400">Technische Daten (eine pro Zeile)</label>
-        <textarea
-          name="features"
-          rows={3}
-          defaultValue={initial?.features}
-          placeholder="Hubraum: 2.0L&#10;Zylinder: 4"
-          className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-        />
-      </div>
-      <div className="sm:col-span-2">
-        <label className="block text-sm text-zinc-400">Finanzierungsangebot</label>
-        <textarea
-          name="financingOffer"
-          rows={3}
-          defaultValue={initial?.financingOffer}
-          className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-        />
-      </div>
-      <div className="sm:col-span-2">
-        <label className="block text-sm text-zinc-400">Beschreibung</label>
-        <textarea
-          name="description"
-          rows={3}
-          defaultValue={initial?.description}
-          className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-        />
-      </div>
-      <div className="sm:col-span-2">
-        <label className="block text-sm text-zinc-400">Ausstattung (eine pro Zeile)</label>
-        <textarea
-          name="equipment"
-          rows={4}
-          defaultValue={initial?.equipment}
-          placeholder="Klimaanlage&#10;Ledersitze"
-          className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
-        />
-      </div>
+      <section className="grid gap-4 sm:grid-cols-2">
+        <h2 className="sm:col-span-2 text-sm font-semibold uppercase tracking-widest text-zinc-400">
+          Grunddaten
+        </h2>
+        <div>
+          <label className="block text-sm text-zinc-400">Marke</label>
+          <select
+            name="make"
+            required
+            defaultValue={initial?.make ?? ""}
+            className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
+          >
+            <option value="" disabled>
+              Marke wählen
+            </option>
+            {CAR_BRANDS.map((brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Field name="model" label="Modell" defaultValue={initial?.model} required />
+        <Field name="price" label="Preis (€)" type="number" step="0.01" defaultValue={initial?.price} required />
+        <div>
+          <label className="block text-sm text-zinc-400">Status</label>
+          <select
+            name="status"
+            defaultValue={initial?.status ?? "AVAILABLE"}
+            className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
+          >
+            <option value="AVAILABLE">Verfügbar (veröffentlicht)</option>
+            <option value="RESERVED">Reserviert</option>
+            <option value="SOLD">Verkauft</option>
+          </select>
+        </div>
+        <Field name="financingUrl" label="mobile.de Finanzierungs-URL" type="url" defaultValue={initial?.financingUrl} className="sm:col-span-2" />
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2">
+        <h2 className="sm:col-span-2 text-sm font-semibold uppercase tracking-widest text-zinc-400">
+          Technische Daten
+        </h2>
+        <div>
+          <label className="block text-sm text-zinc-400">Erstzulassung</label>
+          <div className="mt-1 flex gap-2">
+            <input
+              name="firstRegistrationMonth"
+              type="number"
+              min={1}
+              max={12}
+              placeholder="MM"
+              defaultValue={firstReg.month || initial?.firstRegistrationMonth}
+              className="w-20 rounded-sm border border-zinc-700 bg-zinc-900 px-3 py-2 text-white"
+            />
+            <span className="self-center text-zinc-500">/</span>
+            <input
+              name="firstRegistrationYear"
+              type="number"
+              min={1900}
+              max={new Date().getFullYear() + 1}
+              placeholder="YYYY"
+              defaultValue={firstReg.year || initial?.firstRegistrationYear}
+              className="w-28 rounded-sm border border-zinc-700 bg-zinc-900 px-3 py-2 text-white"
+            />
+          </div>
+        </div>
+        <Field name="mileage" label="Kilometerstand" type="number" defaultValue={initial?.mileage} />
+        <div>
+          <label className="block text-sm text-zinc-400">Kraftstoff</label>
+          <select
+            name="fuelType"
+            defaultValue={initial?.fuelType ?? ""}
+            className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
+          >
+            <option value="">—</option>
+            {FUEL_TYPES.map((fuel) => (
+              <option key={fuel} value={fuel}>
+                {fuel}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm text-zinc-400">Getriebe</label>
+          <select
+            name="transmission"
+            defaultValue={initial?.transmission ?? ""}
+            className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2 text-white"
+          >
+            <option value="">—</option>
+            {TRANSMISSION_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Field name="horsepower" label="Leistung (PS)" type="number" defaultValue={initial?.horsepower} />
+        <Field name="engineDisplacement" label="Hubraum (ccm)" type="number" defaultValue={initial?.engineDisplacement} />
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="sm:col-span-2 lg:col-span-3 text-sm font-semibold uppercase tracking-widest text-zinc-400">
+          Farbe & Interieur
+        </h2>
+        <Field name="exteriorColor" label="Außen" defaultValue={initial?.exteriorColor} />
+        <Field name="interiorColor" label="Innen" defaultValue={initial?.interiorColor} />
+        <Field name="upholstery" label="Polsterung" defaultValue={initial?.upholstery} placeholder="z.B. Vollleder" />
+        <Field name="doors" label="Türen" defaultValue={initial?.doors} placeholder="z.B. 4/5" />
+        <Field name="seats" label="Sitze" type="number" defaultValue={initial?.seats} />
+      </section>
+
+      <section>
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
+          Ausstattung ({selectedFeatures.size}/{ALL_EQUIPMENT_FEATURES.length})
+        </h2>
+        <div className="mt-4 grid gap-6 lg:grid-cols-3">
+          <EquipmentColumn
+            features={EQUIPMENT_FEATURES_COL1}
+            selected={selectedFeatures}
+            onToggle={toggleFeature}
+          />
+          <EquipmentColumn
+            features={EQUIPMENT_FEATURES_COL2}
+            selected={selectedFeatures}
+            onToggle={toggleFeature}
+          />
+          <EquipmentColumn
+            features={EQUIPMENT_FEATURES_COL3}
+            selected={selectedFeatures}
+            onToggle={toggleFeature}
+          />
+        </div>
+      </section>
 
       {mode === "create" ? (
-        <div className="sm:col-span-2">
+        <div>
           <label className="block text-sm text-zinc-400">Bilder (max. 10, JPG/PNG/WEBP)</label>
           <input
             ref={fileInputRef}
@@ -242,10 +354,8 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
           />
         </div>
       ) : (
-        <div className="sm:col-span-2">
-          <label className="block text-sm text-zinc-400">
-            Bilder ({sortedImages.length}/10)
-          </label>
+        <div>
+          <label className="block text-sm text-zinc-400">Bilder ({sortedImages.length}/10)</label>
           {sortedImages.length > 0 && (
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
               {sortedImages.map((img, i) => (
@@ -297,9 +407,9 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
         </div>
       )}
 
-      {error && <p className="sm:col-span-2 text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <div className="flex gap-3 sm:col-span-2">
+      <div className="flex gap-3">
         <button
           type="submit"
           disabled={loading || imageLoading}
@@ -321,12 +431,45 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
   );
 }
 
-function Field(
-  props: React.InputHTMLAttributes<HTMLInputElement> & { label: string; defaultValue?: string | number }
-) {
-  const { label, defaultValue, ...rest } = props;
+function EquipmentColumn({
+  features,
+  selected,
+  onToggle,
+}: {
+  features: readonly string[];
+  selected: Set<string>;
+  onToggle: (feature: string) => void;
+}) {
   return (
-    <div>
+    <div className="space-y-2">
+      {features.map((feature) => (
+        <label
+          key={feature}
+          className="flex cursor-pointer items-start gap-2 rounded-sm border border-zinc-800 px-3 py-2 text-sm text-zinc-300 hover:border-zinc-600"
+        >
+          <input
+            type="checkbox"
+            checked={selected.has(feature)}
+            onChange={() => onToggle(feature)}
+            className="mt-0.5 accent-metallic"
+          />
+          <span>{feature}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function Field(
+  props: React.InputHTMLAttributes<HTMLInputElement> & {
+    label: string;
+    defaultValue?: string | number;
+    className?: string;
+  }
+) {
+  const { label, defaultValue, className, ...rest } = props;
+  return (
+    <div className={className}>
       <label className="block text-sm text-zinc-400">{label}</label>
       <input
         {...rest}

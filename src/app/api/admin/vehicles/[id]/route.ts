@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { jsonData, jsonError, requireAdmin, serializeVehicle } from "@/lib/api-helpers";
 import { vehicleSchema } from "@/lib/validations";
 import { parseVehicleFormBody, updateVehicleRecord } from "@/lib/vehicle-helpers";
+import { parseYearFromFirstRegistration } from "@/lib/vehicle-constants";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -40,36 +41,53 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const existing = await prisma.vehicle.findUnique({ where: { id } });
   if (!existing) return jsonError("Araç bulunamadı.", 404);
 
+  const firstRegistration =
+    parsed.data.firstRegistration !== undefined
+      ? parsed.data.firstRegistration
+      : existing.firstRegistration;
+  const year =
+    parsed.data.year ??
+    parseYearFromFirstRegistration(firstRegistration) ??
+    existing.year;
+
   const merged = {
     make: parsed.data.make ?? existing.make,
     model: parsed.data.model ?? existing.model,
-    year: parsed.data.year ?? existing.year,
+    year,
     price: parsed.data.price ?? Number(existing.price),
+    firstRegistration,
     mileage: parsed.data.mileage !== undefined ? parsed.data.mileage : existing.mileage,
     fuelType: parsed.data.fuelType !== undefined ? parsed.data.fuelType : existing.fuelType,
     transmission:
       parsed.data.transmission !== undefined ? parsed.data.transmission : existing.transmission,
     horsepower:
       parsed.data.horsepower !== undefined ? parsed.data.horsepower : existing.horsepower,
-    color: parsed.data.color !== undefined ? parsed.data.color : existing.color,
-    description:
-      parsed.data.description !== undefined ? parsed.data.description : existing.description,
-    financingOffer:
-      parsed.data.financingOffer !== undefined
-        ? parsed.data.financingOffer
-        : existing.financingOffer,
+    engineDisplacement:
+      parsed.data.engineDisplacement !== undefined
+        ? parsed.data.engineDisplacement
+        : existing.engineDisplacement,
+    exteriorColor:
+      parsed.data.exteriorColor !== undefined
+        ? parsed.data.exteriorColor
+        : existing.exteriorColor ?? existing.color,
+    interiorColor:
+      parsed.data.interiorColor !== undefined ? parsed.data.interiorColor : existing.interiorColor,
+    upholstery: parsed.data.upholstery !== undefined ? parsed.data.upholstery : existing.upholstery,
+    doors: parsed.data.doors !== undefined ? parsed.data.doors : existing.doors,
+    seats: parsed.data.seats !== undefined ? parsed.data.seats : existing.seats,
     financingUrl:
       parsed.data.financingUrl !== undefined ? parsed.data.financingUrl : existing.financingUrl,
     status: parsed.data.status ?? existing.status,
-    features: parsed.data.features ?? existing.features,
-    equipment:
-      parsed.data.equipment ??
-      (
-        await prisma.equipment.findMany({
-          where: { vehicleId: id },
-          orderBy: { sortOrder: "asc" },
-        })
-      ).map((e) => e.name),
+    equipmentFeatures:
+      parsed.data.equipmentFeatures ??
+      (existing.equipmentFeatures.length > 0
+        ? existing.equipmentFeatures
+        : (
+            await prisma.equipment.findMany({
+              where: { vehicleId: id },
+              orderBy: { sortOrder: "asc" },
+            })
+          ).map((e) => e.name)),
   };
 
   const fullParsed = vehicleSchema.safeParse(merged);

@@ -2,7 +2,8 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { jsonData, jsonError, requireAdmin, serializeVehicle } from "@/lib/api-helpers";
 import { vehicleSchema } from "@/lib/validations";
-import { vehicleSlug } from "@/lib/utils";
+import { updateVehicleRecord } from "@/lib/vehicle-helpers";
+import { parseYearFromFirstRegistration } from "@/lib/vehicle-constants";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -29,35 +30,53 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const existing = await prisma.vehicle.findUnique({ where: { id } });
   if (!existing) return jsonError("Araç bulunamadı.", 404);
 
-  const slug =
-    parsed.data.make || parsed.data.model || parsed.data.year
-      ? vehicleSlug(
-          parsed.data.make ?? existing.make,
-          parsed.data.model ?? existing.model,
-          parsed.data.year ?? existing.year,
-          id
-        )
-      : undefined;
+  const firstRegistration =
+    parsed.data.firstRegistration !== undefined
+      ? parsed.data.firstRegistration
+      : existing.firstRegistration;
+  const year =
+    parsed.data.year ??
+    parseYearFromFirstRegistration(firstRegistration) ??
+    existing.year;
 
-  const { equipment: equipList, ...vehicleData } = parsed.data;
+  const merged = {
+    make: parsed.data.make ?? existing.make,
+    model: parsed.data.model ?? existing.model,
+    year,
+    price: parsed.data.price ?? Number(existing.price),
+    firstRegistration,
+    mileage: parsed.data.mileage !== undefined ? parsed.data.mileage : existing.mileage,
+    fuelType: parsed.data.fuelType !== undefined ? parsed.data.fuelType : existing.fuelType,
+    transmission:
+      parsed.data.transmission !== undefined ? parsed.data.transmission : existing.transmission,
+    horsepower:
+      parsed.data.horsepower !== undefined ? parsed.data.horsepower : existing.horsepower,
+    engineDisplacement:
+      parsed.data.engineDisplacement !== undefined
+        ? parsed.data.engineDisplacement
+        : existing.engineDisplacement,
+    exteriorColor:
+      parsed.data.exteriorColor !== undefined
+        ? parsed.data.exteriorColor
+        : existing.exteriorColor ?? existing.color,
+    interiorColor:
+      parsed.data.interiorColor !== undefined ? parsed.data.interiorColor : existing.interiorColor,
+    upholstery: parsed.data.upholstery !== undefined ? parsed.data.upholstery : existing.upholstery,
+    doors: parsed.data.doors !== undefined ? parsed.data.doors : existing.doors,
+    seats: parsed.data.seats !== undefined ? parsed.data.seats : existing.seats,
+    financingUrl:
+      parsed.data.financingUrl !== undefined ? parsed.data.financingUrl : existing.financingUrl,
+    status: parsed.data.status ?? existing.status,
+    equipmentFeatures:
+      parsed.data.equipmentFeatures ??
+      (existing.equipmentFeatures.length > 0 ? existing.equipmentFeatures : []),
+  };
 
-  const vehicle = await prisma.vehicle.update({
-    where: { id },
-    data: {
-      ...vehicleData,
-      financingUrl: vehicleData.financingUrl || null,
-      ...(slug ? { slug } : {}),
-      ...(equipList
-        ? {
-            equipment: {
-              deleteMany: {},
-              create: equipList.map((name, i) => ({ name, sortOrder: i })),
-            },
-          }
-        : {}),
-    },
-    include: { files: true, equipment: true },
-  });
+  const fullParsed = vehicleSchema.safeParse(merged);
+  if (!fullParsed.success) return jsonError("Doğrulama hatası.", 400);
+
+  const vehicle = await updateVehicleRecord(id, fullParsed.data);
+  if (!vehicle) return jsonError("Araç bulunamadı.", 404);
 
   return jsonData(serializeVehicle(vehicle));
 }
