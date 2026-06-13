@@ -11,8 +11,8 @@ export async function FeaturedVehicles() {
     vehicles = await prisma.vehicle.findMany({
       where: { status: "AVAILABLE" },
       include: { files: true, equipment: true },
-      orderBy: [{ make: "asc" }, { model: "asc" }],
-      take: 5,
+      orderBy: { price: "desc" },
+      take: 3,
     });
   } catch {
     return (
