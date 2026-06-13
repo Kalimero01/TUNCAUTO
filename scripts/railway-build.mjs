@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 
 const service = process.env.RAILWAY_SERVICE_NAME ?? process.env.RAILPACK_SERVICE ?? "backend";
 
-const builds: Record<string, string> = {
+const builds = {
   backend: "npm run build -w backend && npm run db:generate -w backend",
   frontend: "npm run build -w frontend",
 };
