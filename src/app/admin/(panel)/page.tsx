@@ -7,14 +7,14 @@ export default async function AdminDashboardPage() {
   const session = await auth();
   if (!session) redirect("/admin/login");
 
-  const [vehicleCount, availableCount, pendingSubmissions, unreadMessages, recentSubmissions] =
+  const [vehicleCount, availableCount, pendingSubmissions, unreadSubmissions, recentSubmissions] =
     await Promise.all([
       prisma.vehicle.count(),
       prisma.vehicle.count({ where: { status: "AVAILABLE" } }),
       prisma.sellerSubmission.count({ where: { status: "PENDING" } }),
-      prisma.chatMessage.count({ where: { senderType: "SELLER", isRead: false } }),
+      prisma.sellerSubmission.count({ where: { readAt: null } }),
       prisma.sellerSubmission.findMany({
-        where: { status: "PENDING" },
+        where: { readAt: null },
         orderBy: { createdAt: "desc" },
         take: 5,
       }),
@@ -29,13 +29,13 @@ export default async function AdminDashboardPage() {
         <StatCard label="Fahrzeuge gesamt" value={vehicleCount} />
         <StatCard label="Verfügbar" value={availableCount} />
         <StatCard label="Offene Angebote" value={pendingSubmissions} href="/admin/submissions" />
-        <StatCard label="Ungelesene Nachrichten" value={unreadMessages} href="/admin/chat" />
+        <StatCard label="Ungelesene Angebote" value={unreadSubmissions} href="/admin/submissions" />
       </div>
 
       <section className="mt-10">
-        <h2 className="font-semibold text-white">Neueste Angebote</h2>
+        <h2 className="font-semibold text-white">Neueste ungelesene Angebote</h2>
         {recentSubmissions.length === 0 ? (
-          <p className="mt-4 text-sm text-zinc-500">Keine offenen Angebote.</p>
+          <p className="mt-4 text-sm text-zinc-500">Keine ungelesenen Angebote.</p>
         ) : (
           <div className="mt-4 space-y-2">
             {recentSubmissions.map((s) => (

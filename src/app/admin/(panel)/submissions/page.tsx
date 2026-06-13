@@ -13,14 +13,14 @@ type Submission = {
   year: number;
   price: string;
   status: string;
+  isRead: boolean;
   createdAt: string;
-  unreadMessages?: number;
 };
 
 export default function AdminSubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("ALL");
+  const [filter, setFilter] = useState<"ALL" | "UNREAD" | "READ">("ALL");
 
   async function load() {
     const res = await fetch("/api/submissions?admin=true");
@@ -33,8 +33,11 @@ export default function AdminSubmissionsPage() {
     load();
   }, []);
 
-  const filtered =
-    filter === "ALL" ? submissions : submissions.filter((s) => s.status === filter);
+  const filtered = submissions.filter((s) => {
+    if (filter === "UNREAD") return !s.isRead;
+    if (filter === "READ") return s.isRead;
+    return true;
+  });
 
   return (
     <div>
@@ -42,13 +45,12 @@ export default function AdminSubmissionsPage() {
         <h1 className="text-2xl font-bold text-white">Verkaufsangebote</h1>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={(e) => setFilter(e.target.value as "ALL" | "UNREAD" | "READ")}
           className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white"
         >
           <option value="ALL">Alle</option>
-          <option value="PENDING">Offen</option>
-          <option value="APPROVED">Genehmigt</option>
-          <option value="REJECTED">Abgelehnt</option>
+          <option value="UNREAD">Ungelesen</option>
+          <option value="READ">Gelesen</option>
         </select>
       </div>
 
@@ -64,22 +66,25 @@ export default function AdminSubmissionsPage() {
               href={`/admin/submissions/${s.id}`}
               className="flex items-center justify-between rounded-xl border border-zinc-800 px-5 py-4 transition hover:border-zinc-700"
             >
-              <div>
-                <p className="font-medium text-white">
-                  {s.make} {s.model} {s.year}
-                </p>
-                <p className="text-sm text-zinc-500">
-                  {s.sellerName} — {s.sellerEmail}
-                </p>
+              <div className="flex items-center gap-3">
+                {!s.isRead && (
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-brand-500" aria-label="Ungelesen" />
+                )}
+                <div>
+                  <p className="font-medium text-white">
+                    {s.make} {s.model} {s.year}
+                  </p>
+                  <p className="text-sm text-zinc-500">
+                    {s.sellerName} — {s.sellerEmail}
+                  </p>
+                </div>
               </div>
               <div className="text-right">
-                <StatusBadge status={s.status} />
+                <ReadBadge isRead={s.isRead} />
                 <p className="mt-1 text-sm text-zinc-400">{formatPrice(s.price)}</p>
-                {(s.unreadMessages ?? 0) > 0 && (
-                  <span className="mt-1 inline-block rounded-full bg-brand-500 px-2 py-0.5 text-xs text-white">
-                    {s.unreadMessages} Nachrichten
-                  </span>
-                )}
+                <p className="mt-1 text-xs text-zinc-500">
+                  {new Date(s.createdAt).toLocaleDateString("de-DE")}
+                </p>
               </div>
             </Link>
           ))}
@@ -89,16 +94,10 @@ export default function AdminSubmissionsPage() {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    PENDING: "text-amber-400",
-    APPROVED: "text-emerald-400",
-    REJECTED: "text-red-400",
-  };
-  const labels: Record<string, string> = {
-    PENDING: "Offen",
-    APPROVED: "Genehmigt",
-    REJECTED: "Abgelehnt",
-  };
-  return <span className={`text-xs font-medium ${styles[status]}`}>{labels[status] ?? status}</span>;
+function ReadBadge({ isRead }: { isRead: boolean }) {
+  return (
+    <span className={`text-xs font-medium ${isRead ? "text-zinc-500" : "text-brand-400"}`}>
+      {isRead ? "Gelesen" : "Ungelesen"}
+    </span>
+  );
 }

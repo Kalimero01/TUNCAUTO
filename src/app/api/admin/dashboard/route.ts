@@ -5,14 +5,14 @@ export async function GET() {
   const authResult = await requireAdmin();
   if (authResult instanceof Response) return authResult;
 
-  const [vehicleCount, availableCount, pendingSubmissions, unreadMessages, recentSubmissions] =
+  const [vehicleCount, availableCount, pendingSubmissions, unreadSubmissions, recentSubmissions] =
     await Promise.all([
       prisma.vehicle.count(),
       prisma.vehicle.count({ where: { status: "AVAILABLE" } }),
       prisma.sellerSubmission.count({ where: { status: "PENDING" } }),
-      prisma.chatMessage.count({ where: { senderType: "SELLER", isRead: false } }),
+      prisma.sellerSubmission.count({ where: { readAt: null } }),
       prisma.sellerSubmission.findMany({
-        where: { status: "PENDING" },
+        where: { readAt: null },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: {
@@ -30,7 +30,7 @@ export async function GET() {
     vehicleCount,
     availableCount,
     pendingSubmissions,
-    unreadMessages,
+    unreadSubmissions,
     recentSubmissions,
   });
 }

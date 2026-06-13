@@ -20,16 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   const submissions = await prisma.sellerSubmission.findMany({
-    include: {
-      files: true,
-      _count: {
-        select: {
-          chatMessages: {
-            where: { senderType: "SELLER", isRead: false },
-          },
-        },
-      },
-    },
+    include: { files: true },
     orderBy: { createdAt: "desc" },
   });
 
@@ -110,10 +101,10 @@ export async function POST(request: NextRequest) {
   });
 
   try {
-    for (const file of images) {
-      const saved = await saveUpload(file, "IMAGE");
+    for (let i = 0; i < images.length; i++) {
+      const saved = await saveUpload(images[i], "IMAGE");
       await prisma.fileUpload.create({
-        data: { ...saved, submissionId: submission.id },
+        data: { ...saved, submissionId: submission.id, sortOrder: i },
       });
     }
   } catch (error) {

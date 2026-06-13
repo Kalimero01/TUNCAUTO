@@ -9,6 +9,7 @@ const existing: Company = {
   phone: "+49 30 1",
   email: "info@tuncauto.com",
   mapEmbedUrl: "https://maps.example/embed",
+  logoFile: null,
   impressum: "Impressum text",
   privacyPolicy: "Privacy text",
   updatedAt: new Date(),

@@ -105,6 +105,7 @@ export function serializeSubmission(submission: {
   partsDetails: string | null;
   status: string;
   adminNotes: string | null;
+  readAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   files?: Array<{
@@ -113,18 +114,21 @@ export function serializeSubmission(submission: {
     mimeType: string;
     type: string;
     originalName: string;
+    sortOrder?: number;
   }>;
-  _count?: { chatMessages: number };
 }) {
   return {
     ...submission,
     price: submission.price.toString(),
     desiredPrice: submission.desiredPrice?.toString() ?? null,
-    images: submission.files?.filter((f) => f.type === "IMAGE").map(formatFile) ?? [],
+    images:
+      submission.files
+        ?.filter((f) => f.type === "IMAGE")
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        .map(formatFile) ?? [],
     videos: submission.files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
-    unreadMessages: submission._count?.chatMessages,
+    isRead: submission.readAt !== null,
     files: undefined,
-    _count: undefined,
   };
 }
 

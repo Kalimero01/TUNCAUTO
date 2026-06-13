@@ -16,8 +16,7 @@ export const authConfig = {
         pathname.startsWith("/api/admin") ||
         (pathname.startsWith("/api/vehicles") &&
           ["POST", "PATCH", "DELETE"].includes(request.method)) ||
-        (pathname.startsWith("/api/submissions") && request.method !== "POST") ||
-        pathname.startsWith("/api/chat/admin");
+        (pathname.startsWith("/api/submissions") && request.method !== "POST");
 
       if (isApiAdminRoute) {
         return !!auth?.user;

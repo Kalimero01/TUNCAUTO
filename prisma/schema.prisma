@@ -170,6 +170,7 @@ model SellerSubmission {
   hasPartsReplaced Boolean?
   partsDetails     String?          @db.VarChar(200)
   status           SubmissionStatus @default(PENDING)
+  readAt           DateTime?
   adminNotes       String?
   vehicle          Vehicle?
   files            FileUpload[]     @relation("SubmissionFiles")

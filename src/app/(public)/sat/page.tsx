@@ -54,7 +54,7 @@ function YesNoField({
 export default function SellPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
-  const [submissionId, setSubmissionId] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [accident, setAccident] = useState<"yes" | "no" | "">("");
   const [repaint, setRepaint] = useState<"yes" | "no" | "">("");
   const [parts, setParts] = useState<"yes" | "no" | "">("");
@@ -66,6 +66,10 @@ export default function SellPage() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    formData.delete("images");
+    for (const file of imageFiles) {
+      formData.append("images", file);
+    }
 
     try {
       const res = await fetch("/api/submissions", { method: "POST", body: formData });
@@ -77,9 +81,9 @@ export default function SellPage() {
         return;
       }
 
-      setSubmissionId(json.data.id);
       setStatus("success");
       form.reset();
+      setImageFiles([]);
       setAccident("");
       setRepaint("");
       setParts("");
@@ -95,14 +99,12 @@ export default function SellPage() {
         <div className="rounded-sm border border-emerald-800/50 bg-emerald-950/20 p-10">
           <h1 className="text-2xl font-light text-emerald-400">Anfrage erhalten!</h1>
           <p className="mt-4 text-zinc-400">Wir melden uns in Kürze bei Ihnen.</p>
-          {submissionId && (
-            <Link
-              href={`/sat/mesaj/${submissionId}`}
-              className="mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
-            >
-              Nachrichten →
-            </Link>
-          )}
+          <Link
+            href="/"
+            className="mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
+          >
+            Zur Startseite
+          </Link>
         </div>
       </div>
     );
@@ -194,6 +196,8 @@ export default function SellPage() {
             label="Fahrzeugbilder"
             buttonLabel="Bilder auswählen"
             multiple
+            maxFiles={8}
+            onFilesChange={setImageFiles}
             hint={`${IMAGE_FORMAT_LABEL} — max. 10 MB pro Bild · max. 8 Dateien`}
             previewVariant="square"
           />

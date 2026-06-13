@@ -10,8 +10,7 @@ export default auth((req) => {
     pathname.startsWith("/api/live-chat/admin") ||
     (pathname.startsWith("/api/vehicles") &&
       (req.method === "POST" || req.method === "PATCH" || req.method === "DELETE")) ||
-    (pathname.startsWith("/api/submissions") && req.method !== "POST") ||
-    pathname.startsWith("/api/chat/admin");
+    (pathname.startsWith("/api/submissions") && req.method !== "POST");
 
   if (isApiAdminRoute && !req.auth) {
     return Response.json({ error: "Nicht autorisiert." }, { status: 401 });
@@ -25,6 +24,5 @@ export const config = {
     "/api/live-chat/admin/:path*",
     "/api/vehicles/:path*",
     "/api/submissions/:path*",
-    "/api/chat/admin/:path*",
   ],
 };

@@ -38,5 +38,4 @@ export const adminNav = [
   { href: "/admin/contact", label: "Kontakt & Logo" },
   { href: "/admin/impressum", label: "Impressum" },
   { href: "/admin/live-chat", label: "Live-Chat" },
-  { href: "/admin/chat", label: "Angebots-Chat" },
 ] as const;
