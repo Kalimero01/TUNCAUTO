@@ -19,16 +19,16 @@ const baseUrl = getBaseUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "TUNC AUTO | Premium Automobile",
+    default: "TUNC AUTO | Premium-Automobile",
     template: "%s | TUNC AUTO",
   },
   description:
-    "TUNC AUTO — Premium automobile dealership. Exklusive Fahrzeuge, Finanzierung und professioneller An- und Verkauf.",
+    "TUNC AUTO — Premium-Autohaus. Exklusive Fahrzeuge, Finanzierung und professioneller An- und Verkauf.",
   openGraph: {
     type: "website",
     locale: "de_DE",
     siteName: "TUNC AUTO",
-    title: "TUNC AUTO | Premium Automobile",
+    title: "TUNC AUTO | Premium-Automobile",
     description: "Exklusive Fahrzeuge. Vertrauen. Eleganz.",
   },
   robots: { index: true, follow: true },

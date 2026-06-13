@@ -1,31 +1,26 @@
 import path from "node:path";
 import { mkdir, writeFile, unlink } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
+import {
+  IMAGE_EXT,
+  IMAGE_MIMES,
+  VIDEO_MIMES,
+  resolveUploadMime,
+} from "@/lib/upload-constants";
+
+export {
+  IMAGE_ACCEPT,
+  IMAGE_FORMAT_LABEL,
+  IMAGE_MIMES,
+  isAllowedImageFile,
+  normalizeMime,
+  resolveUploadMime,
+} from "@/lib/upload-constants";
 
 export const UPLOAD_DIR = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "uploads");
 
-const IMAGE_MIMES = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-]);
-
-const VIDEO_MIMES = new Set([
-  "video/mp4",
-  "video/webm",
-  "video/quicktime",
-]);
-
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
-
-const IMAGE_EXT: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/jpg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-};
 
 const VIDEO_EXT: Record<string, string> = {
   "video/mp4": ".mp4",
@@ -35,16 +30,11 @@ const VIDEO_EXT: Record<string, string> = {
 
 export type UploadKind = "IMAGE" | "VIDEO";
 
-export function normalizeMime(mime: string): string {
-  if (mime === "image/jpg") return "image/jpeg";
-  return mime;
-}
-
 export function validateUpload(
   file: File,
   kind: UploadKind
 ): { ok: true } | { ok: false; error: string } {
-  const mime = normalizeMime(file.type);
+  const mime = resolveUploadMime(file, kind);
   const allowedMimes = kind === "IMAGE" ? IMAGE_MIMES : VIDEO_MIMES;
   const maxSize = kind === "IMAGE" ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
 
@@ -53,7 +43,7 @@ export function validateUpload(
       ok: false,
       error:
         kind === "IMAGE"
-          ? "Ungültiges Bildformat. JPG, JPEG, PNG oder WEBP erlaubt."
+          ? "Ungültiges Bildformat. JPG, JPEG, PNG, WEBP oder AVIF erlaubt."
           : "Ungültiges Videoformat. MP4 erlaubt.",
     };
   }
@@ -81,7 +71,7 @@ export async function saveUpload(file: File, kind: UploadKind): Promise<{
   const validation = validateUpload(file, kind);
   if (!validation.ok) throw new Error(validation.error);
 
-  const mime = normalizeMime(file.type);
+  const mime = resolveUploadMime(file, kind);
   const extMap = kind === "IMAGE" ? IMAGE_EXT : VIDEO_EXT;
   const ext = extMap[mime] ?? (kind === "IMAGE" ? ".bin" : ".bin");
   const filename = `${randomUUID()}${ext}`;

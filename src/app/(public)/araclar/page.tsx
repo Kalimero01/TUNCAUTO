@@ -7,8 +7,8 @@ import { serializeVehicle } from "@/lib/api-helpers";
 import type { Prisma } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: "Vehicles",
-  description: "TUNC AUTO Fahrzeuge — Premium Automobile alphabetisch sortiert.",
+  title: "Fahrzeuge",
+  description: "TUNC AUTO Fahrzeuge — Premium-Automobile alphabetisch sortiert.",
 };
 
 export const dynamic = "force-dynamic";
@@ -40,12 +40,12 @@ export default async function VehiclesPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
       <div className="mb-10 text-center">
-        <p className="text-xs uppercase tracking-[0.35em] text-metallic">Vehicles</p>
+        <p className="text-xs uppercase tracking-[0.35em] text-metallic">Fahrzeuge</p>
         <h1 className="mt-3 text-3xl font-light text-white">Fahrzeuge</h1>
         <p className="mt-3 text-zinc-500">Alphabetisch nach Marke sortiert</p>
       </div>
 
-      <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Laden...</p>}>
+      <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Wird geladen...</p>}>
         <VehicleFilters total={vehicles.length} />
       </Suspense>
 

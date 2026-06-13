@@ -39,23 +39,23 @@ export default function AdminSubmissionsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Satıcı Başvuruları</h1>
+        <h1 className="text-2xl font-bold text-white">Verkaufsangebote</h1>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white"
         >
-          <option value="ALL">Tümü</option>
-          <option value="PENDING">Bekleyen</option>
-          <option value="APPROVED">Onaylanan</option>
-          <option value="REJECTED">Reddedilen</option>
+          <option value="ALL">Alle</option>
+          <option value="PENDING">Offen</option>
+          <option value="APPROVED">Genehmigt</option>
+          <option value="REJECTED">Abgelehnt</option>
         </select>
       </div>
 
       {loading ? (
-        <p className="mt-8 text-zinc-500">Yükleniyor...</p>
+        <p className="mt-8 text-zinc-500">Wird geladen...</p>
       ) : filtered.length === 0 ? (
-        <p className="mt-8 text-zinc-500">Başvuru bulunamadı.</p>
+        <p className="mt-8 text-zinc-500">Keine Angebote gefunden.</p>
       ) : (
         <div className="mt-8 space-y-3">
           {filtered.map((s) => (
@@ -77,7 +77,7 @@ export default function AdminSubmissionsPage() {
                 <p className="mt-1 text-sm text-zinc-400">{formatPrice(s.price)}</p>
                 {(s.unreadMessages ?? 0) > 0 && (
                   <span className="mt-1 inline-block rounded-full bg-brand-500 px-2 py-0.5 text-xs text-white">
-                    {s.unreadMessages} mesaj
+                    {s.unreadMessages} Nachrichten
                   </span>
                 )}
               </div>
@@ -96,9 +96,9 @@ function StatusBadge({ status }: { status: string }) {
     REJECTED: "text-red-400",
   };
   const labels: Record<string, string> = {
-    PENDING: "Bekliyor",
-    APPROVED: "Onaylandı",
-    REJECTED: "Reddedildi",
+    PENDING: "Offen",
+    APPROVED: "Genehmigt",
+    REJECTED: "Abgelehnt",
   };
   return <span className={`text-xs font-medium ${styles[status]}`}>{labels[status] ?? status}</span>;
 }

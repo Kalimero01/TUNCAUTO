@@ -31,7 +31,7 @@ export default function ChangePasswordPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(json.error ?? "Şifre değiştirilemedi.");
+      setError(json.error ?? "Passwort konnte nicht geändert werden.");
       return;
     }
 
@@ -44,21 +44,21 @@ export default function ChangePasswordPage() {
     <div className="mx-auto flex min-h-screen max-w-md items-center px-4">
       <div className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
         <h1 className="text-2xl font-bold text-white">
-          {forced ? "Şifrenizi Değiştirin" : "Şifre Değiştir"}
+          {forced ? "Passwort ändern" : "Passwort ändern"}
         </h1>
         {forced && (
           <p className="mt-2 text-sm text-amber-400">
-            İlk girişinizde güvenlik için şifrenizi değiştirmeniz zorunludur.
+            Aus Sicherheitsgründen müssen Sie Ihr Passwort bei der ersten Anmeldung ändern.
           </p>
         )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <PasswordField name="currentPassword" label="Mevcut Şifre" />
-          <PasswordField name="newPassword" label="Yeni Şifre" />
-          <PasswordField name="confirmPassword" label="Yeni Şifre (Tekrar)" />
+          <PasswordField name="currentPassword" label="Aktuelles Passwort" />
+          <PasswordField name="newPassword" label="Neues Passwort" />
+          <PasswordField name="confirmPassword" label="Neues Passwort (Bestätigung)" />
 
           <p className="text-xs text-zinc-500">
-            En az 12 karakter, büyük/küçük harf, rakam ve özel karakter içermelidir.
+            Mindestens 12 Zeichen, Groß-/Kleinbuchstaben, Ziffer und Sonderzeichen.
           </p>
 
           {error && (
@@ -72,7 +72,7 @@ export default function ChangePasswordPage() {
             disabled={loading}
             className="w-full rounded-full bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-400 disabled:opacity-50"
           >
-            {loading ? "Kaydediliyor..." : "Şifreyi Güncelle"}
+            {loading ? "Wird gespeichert..." : "Passwort aktualisieren"}
           </button>
         </form>
       </div>

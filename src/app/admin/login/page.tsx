@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
+import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -26,7 +27,7 @@ function LoginForm() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Kullanıcı adı/e-posta veya şifre hatalı.");
+      setError("Benutzername/E-Mail oder Passwort ist falsch.");
       return;
     }
 
@@ -37,12 +38,22 @@ function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
-        <h1 className="text-2xl font-bold text-white">Admin Girişi</h1>
-        <p className="mt-2 text-sm text-zinc-500">TUNCAUTO yönetim paneli</p>
+        <div className="flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="Tunc Automobile"
+            width={180}
+            height={72}
+            className="h-16 w-auto object-contain brightness-0 invert"
+            unoptimized
+          />
+        </div>
+        <h1 className="mt-6 text-center text-2xl font-bold text-white">Admin-Anmeldung</h1>
+        <p className="mt-2 text-center text-sm text-zinc-500">Verwaltungsbereich</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label className="block text-sm text-zinc-400">Kullanıcı adı veya e-posta</label>
+            <label className="block text-sm text-zinc-400">Benutzername oder E-Mail</label>
             <input
               name="login"
               required
@@ -51,7 +62,7 @@ function LoginForm() {
             />
           </div>
           <div>
-            <label className="block text-sm text-zinc-400">Şifre</label>
+            <label className="block text-sm text-zinc-400">Passwort</label>
             <input
               name="password"
               type="password"
@@ -72,7 +83,7 @@ function LoginForm() {
             disabled={loading}
             className="w-full rounded-full bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-400 disabled:opacity-50"
           >
-            {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+            {loading ? "Anmeldung läuft..." : "Anmelden"}
           </button>
         </form>
       </div>

@@ -234,6 +234,7 @@ model Company {
   phone         String
   email         String
   mapEmbedUrl   String?
+  logoFile      String?
   impressum     String   @db.Text
   privacyPolicy String   @db.Text
   updatedAt     DateTime @updatedAt

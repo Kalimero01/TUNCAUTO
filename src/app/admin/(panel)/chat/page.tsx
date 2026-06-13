@@ -32,13 +32,13 @@ export default function AdminChatInboxPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white">Mesaj Kutusu</h1>
-      <p className="mt-1 text-zinc-500">Satıcılarla mesajlaşmalar</p>
+      <h1 className="text-2xl font-bold text-white">Angebots-Chat</h1>
+      <p className="mt-1 text-zinc-500">Nachrichten mit Verkäufern</p>
 
       {loading ? (
-        <p className="mt-8 text-zinc-500">Yükleniyor...</p>
+        <p className="mt-8 text-zinc-500">Wird geladen...</p>
       ) : conversations.length === 0 ? (
-        <p className="mt-8 text-zinc-500">Henüz mesajlaşma yok.</p>
+        <p className="mt-8 text-zinc-500">Noch keine Unterhaltungen.</p>
       ) : (
         <div className="mt-8 space-y-2">
           {conversations.map((c) => (

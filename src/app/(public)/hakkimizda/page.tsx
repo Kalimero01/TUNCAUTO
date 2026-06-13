@@ -3,8 +3,8 @@ import Image from "next/image";
 import { getAbout, cmsImageUrl } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: "About Us",
-  description: "TUNC AUTO — Premium automobile dealership. Learn about our story and values.",
+  title: "Über uns",
+  description: "TUNC AUTO — Premium-Autohaus. Erfahren Sie mehr über unsere Geschichte und Werte.",
 };
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function AboutPage() {
         <div className="relative h-64 w-full overflow-hidden sm:h-96">
           <Image
             src={imageUrl}
-            alt={about?.title ?? "About Us"}
+            alt={about?.title ?? "Über uns"}
             fill
             className="object-cover"
             priority
@@ -30,7 +30,7 @@ export default async function AboutPage() {
       )}
 
       <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
-        <p className="text-xs font-medium uppercase tracking-[0.35em] text-metallic">About Us</p>
+        <p className="text-xs font-medium uppercase tracking-[0.35em] text-metallic">Über uns</p>
         <h1 className="mt-4 text-3xl font-light text-white sm:text-4xl">
           {about?.title ?? "Über uns"}
         </h1>

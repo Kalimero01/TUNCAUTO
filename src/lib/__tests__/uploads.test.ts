@@ -12,6 +12,24 @@ describe("validateUpload", () => {
     });
   });
 
+  it("accepts AVIF images by mime type", () => {
+    expect(validateUpload(mockFile("photo.avif", "image/avif", 1024), "IMAGE")).toEqual({
+      ok: true,
+    });
+  });
+
+  it("accepts AVIF images by extension when mime is empty", () => {
+    expect(validateUpload(mockFile("photo.avif", "", 1024), "IMAGE")).toEqual({
+      ok: true,
+    });
+  });
+
+  it("accepts .av1 extension as AVIF", () => {
+    expect(validateUpload(mockFile("photo.av1", "", 1024), "IMAGE")).toEqual({
+      ok: true,
+    });
+  });
+
   it("rejects invalid image mime types", () => {
     const result = validateUpload(mockFile("doc.pdf", "application/pdf", 1024), "IMAGE");
     expect(result.ok).toBe(false);

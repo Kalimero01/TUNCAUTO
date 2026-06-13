@@ -2,9 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
-
-const fuelOptions = ["", "Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
-const transmissionOptions = ["", "Otomatik", "Manuel"];
+import { FUEL_TYPES, TRANSMISSION_TYPES } from "@/lib/vehicle-constants";
 
 export function VehicleFilters({ total }: { total: number }) {
   const router = useRouter();
@@ -38,27 +36,27 @@ export function VehicleFilters({ total }: { total: number }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500">
-            Ara
+            Suche
           </label>
           <input
             type="search"
             defaultValue={q}
-            placeholder="Marka, model..."
+            placeholder="Marke, Modell..."
             onChange={(e) => update("q", e.target.value)}
             className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white placeholder:text-zinc-600 focus:border-brand-500 focus:outline-none"
           />
         </div>
         <div className="w-full sm:w-40">
           <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500">
-            Yakıt
+            Kraftstoff
           </label>
           <select
             value={fuel}
             onChange={(e) => update("fuel", e.target.value)}
             className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-brand-500 focus:outline-none"
           >
-            <option value="">Tümü</option>
-            {fuelOptions.slice(1).map((f) => (
+            <option value="">Alle</option>
+            {FUEL_TYPES.map((f) => (
               <option key={f} value={f}>
                 {f}
               </option>
@@ -67,15 +65,15 @@ export function VehicleFilters({ total }: { total: number }) {
         </div>
         <div className="w-full sm:w-40">
           <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500">
-            Vites
+            Getriebe
           </label>
           <select
             value={transmission}
             onChange={(e) => update("transmission", e.target.value)}
             className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-brand-500 focus:outline-none"
           >
-            <option value="">Tümü</option>
-            {transmissionOptions.slice(1).map((t) => (
+            <option value="">Alle</option>
+            {TRANSMISSION_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
@@ -85,7 +83,7 @@ export function VehicleFilters({ total }: { total: number }) {
       </div>
       <div className="flex items-center justify-between text-sm">
         <p className={pending ? "text-zinc-600" : "text-zinc-500"}>
-          {total} araç listeleniyor
+          {total} Fahrzeuge gelistet
         </p>
         {hasFilters && (
           <button
@@ -93,7 +91,7 @@ export function VehicleFilters({ total }: { total: number }) {
             onClick={clearAll}
             className="text-brand-400 hover:text-brand-300"
           >
-            Filtreleri temizle
+            Filter zurücksetzen
           </button>
         )}
       </div>

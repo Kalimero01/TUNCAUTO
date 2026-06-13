@@ -19,7 +19,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     },
   });
 
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
   return jsonData(serializeSubmission(submission));
 }
 
@@ -35,9 +35,9 @@ export async function POST(request: NextRequest, { params }: Params) {
     include: { files: true, vehicle: true },
   });
 
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
   if (submission.status !== "PENDING") {
-    return jsonError("Bu başvuru zaten işlenmiş.", 400);
+    return jsonError("Dieses Angebot wurde bereits bearbeitet.", 400);
   }
 
   if (action === "approve") {
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     return jsonData(serializeSubmission(updated));
   }
 
-  return jsonError("Geçersiz işlem.", 400);
+  return jsonError("Ungültige Aktion.", 400);
 }
 
 export async function DELETE(_request: NextRequest, { params }: Params) {

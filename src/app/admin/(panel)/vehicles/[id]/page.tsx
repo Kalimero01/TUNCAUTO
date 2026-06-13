@@ -55,7 +55,7 @@ export default function AdminVehicleEditPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (loading) return <p className="text-zinc-500">Laden...</p>;
+  if (loading) return <p className="text-zinc-500">Wird geladen...</p>;
   if (!vehicle) return <p className="text-zinc-500">Fahrzeug nicht gefunden.</p>;
 
   return (

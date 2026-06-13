@@ -12,6 +12,7 @@ import {
   splitFirstRegistration,
   TRANSMISSION_TYPES,
 } from "@/lib/vehicle-constants";
+import { IMAGE_ACCEPT, IMAGE_FORMAT_LABEL, isAllowedImageFile } from "@/lib/upload-constants";
 
 export type VehicleImage = {
   id: string;
@@ -159,9 +160,7 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
 
   function handleCreateFilesSelected(fileList: FileList | null) {
     if (!fileList?.length) return;
-    const incoming = Array.from(fileList).filter((f) =>
-      ["image/jpeg", "image/png", "image/webp"].includes(f.type)
-    );
+    const incoming = Array.from(fileList).filter(isAllowedImageFile);
     setPendingFiles((prev) => {
       const combined = [...prev, ...incoming];
       if (combined.length > 10) {
@@ -430,7 +429,7 @@ function VehicleImagesSection({
         Fahrzeugbilder
       </h2>
       <p className="mt-1 text-sm text-zinc-500">
-        Maximal 10 Bilder · JPG, PNG oder WEBP · {totalCount}/10 hochgeladen
+        Maximal 10 Bilder · {IMAGE_FORMAT_LABEL} · {totalCount}/10 hochgeladen
       </p>
 
       {mode === "create" && pendingFiles.length > 0 && (
@@ -500,7 +499,7 @@ function VehicleImagesSection({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept={IMAGE_ACCEPT}
             multiple
             className="hidden"
             onChange={(e) =>

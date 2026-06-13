@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getCompany } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Kontakt",
   description: "Kontaktieren Sie TUNC AUTO — Adresse, Telefon, E-Mail und Karte.",
 };
 
@@ -14,7 +14,7 @@ export default async function ContactPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="max-w-2xl">
-        <p className="text-xs font-medium uppercase tracking-[0.35em] text-metallic">Contact</p>
+        <p className="text-xs font-medium uppercase tracking-[0.35em] text-metallic">Kontakt</p>
         <h1 className="mt-4 text-3xl font-light text-white">Kontakt</h1>
         <p className="mt-4 text-zinc-400">
           Wir freuen uns auf Ihre Nachricht. Besuchen Sie uns oder kontaktieren Sie uns direkt.

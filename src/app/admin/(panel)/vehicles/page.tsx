@@ -15,6 +15,12 @@ type Vehicle = {
   slug: string;
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  AVAILABLE: "Verfügbar",
+  RESERVED: "Reserviert",
+  SOLD: "Verkauft",
+};
+
 export default function AdminVehiclesPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +46,7 @@ export default function AdminVehiclesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Vehicles</h1>
+        <h1 className="text-2xl font-bold text-white">Fahrzeuge</h1>
         <button
           onClick={() => setShowForm(!showForm)}
           className="rounded-sm bg-metallic px-4 py-2 text-sm font-semibold text-black"
@@ -61,7 +67,7 @@ export default function AdminVehiclesPage() {
       )}
 
       {loading ? (
-        <p className="mt-8 text-zinc-500">Laden...</p>
+        <p className="mt-8 text-zinc-500">Wird geladen...</p>
       ) : vehicles.length === 0 ? (
         <p className="mt-8 text-zinc-500">Keine Fahrzeuge.</p>
       ) : (
@@ -82,7 +88,7 @@ export default function AdminVehiclesPage() {
                     {v.make} {v.model} ({v.year})
                   </td>
                   <td className="px-4 py-3 text-zinc-400">{formatPrice(v.price)}</td>
-                  <td className="px-4 py-3 text-emerald-400">{v.status}</td>
+                  <td className="px-4 py-3 text-emerald-400">{STATUS_LABELS[v.status] ?? v.status}</td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/admin/vehicles/${v.id}`}

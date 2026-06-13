@@ -3,6 +3,44 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const companyData = {
+  name: "Tunc Automobile",
+  address: "Südstr. 48a\n59227 Ahlen\nDeutschland",
+  phone: "01787306033",
+  email: "tuncautomobile2022@gmail.com",
+  mapEmbedUrl: null as string | null,
+  impressum: `Impressum
+
+Angaben gemäß § 5 TMG
+
+Tunc Automobile
+Inhaber: Serkan Tunc
+Südstr. 48a
+59227 Ahlen
+Deutschland
+
+Telefon: 01787306033
+E-Mail: tuncautomobile2022@gmail.com
+
+USt-IdNr.: DE349004935`,
+  privacyPolicy: `Datenschutzerklärung
+
+Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung personenbezogener Daten auf unserer Website.
+
+Verantwortlicher
+Tunc Automobile
+Inhaber: Serkan Tunc
+Südstr. 48a
+59227 Ahlen
+E-Mail: tuncautomobile2022@gmail.com
+
+Erhobene Daten
+Kontaktformulare, Fahrzeugverkaufsanfragen und Live-Chat-Nachrichten.
+
+Ihre Rechte
+Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten.`,
+};
+
 async function main() {
   const passwordHash = await bcrypt.hash("ChangeMeImmediately123!", 12);
 
@@ -21,38 +59,10 @@ async function main() {
 
   await prisma.company.upsert({
     where: { id: "company" },
-    update: {},
+    update: companyData,
     create: {
       id: "company",
-      name: "TUNC AUTO",
-      address: "Musterstraße 1, 10115 Berlin, Deutschland",
-      phone: "+49 30 12345678",
-      email: "info@tuncauto.com",
-      mapEmbedUrl:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.0!2d13.405!3d52.52!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTLCsDMxJzEyLjAiTiAxM8KwMjQnMTguMCJF!5e0!3m2!1sde!2sde!4v1",
-      impressum: `## Impressum
-
-**TUNC AUTO**
-Musterstraße 1
-10115 Berlin
-
-Geschäftsführer: Tunc Auto GmbH
-Handelsregister: HRB 000000
-USt-IdNr.: DE000000000
-
-Kontakt: info@tuncauto.com`,
-      privacyPolicy: `## Datenschutzerklärung
-
-Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung personenbezogener Daten auf unserer Website.
-
-### Verantwortlicher
-TUNC AUTO, Musterstraße 1, 10115 Berlin
-
-### Erhobene Daten
-Kontaktformulare, Fahrzeugverkaufsanfragen und Live-Chat-Nachrichten.
-
-### Ihre Rechte
-Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung.`,
+      ...companyData,
     },
   });
 

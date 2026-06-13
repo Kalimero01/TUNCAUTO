@@ -8,29 +8,29 @@ import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) return jsonError("Yetkisiz erişim.", 401);
+  if (!session?.user?.id) return jsonError("Nicht autorisiert.", 401);
 
   const ip = getClientIp(request);
   const limit = rateLimit(`change-password:${ip}`, 5, 300_000);
-  if (!limit.success) return jsonError("Çok fazla deneme. Lütfen bekleyin.", 429);
+  if (!limit.success) return jsonError("Zu viele Versuche. Bitte warten.", 429);
 
   const body = await request.json();
   const parsed = changePasswordSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.errors[0]?.message ?? "Doğrulama hatası.", 400);
+    return jsonError(parsed.error.errors[0]?.message ?? "Validierungsfehler.", 400);
   }
 
   const strengthError = validatePasswordStrength(parsed.data.newPassword);
   if (strengthError) return jsonError(strengthError, 400);
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-  if (!user) return jsonError("Kullanıcı bulunamadı.", 404);
+  if (!user) return jsonError("Benutzer nicht gefunden.", 404);
 
   const valid = await verifyPassword(parsed.data.currentPassword, user.passwordHash);
-  if (!valid) return jsonError("Mevcut şifre hatalı.", 400);
+  if (!valid) return jsonError("Aktuelles Passwort ist falsch.", 400);
 
   const samePassword = await verifyPassword(parsed.data.newPassword, user.passwordHash);
-  if (samePassword) return jsonError("Yeni şifre mevcut şifreden farklı olmalıdır.", 400);
+  if (samePassword) return jsonError("Das neue Passwort muss sich vom aktuellen unterscheiden.", 400);
 
   await prisma.user.update({
     where: { id: user.id },

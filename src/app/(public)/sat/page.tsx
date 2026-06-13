@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ProminentFileUpload } from "@/components/admin/prominent-file-upload";
+import { IMAGE_FORMAT_LABEL } from "@/lib/upload-constants";
+import { CAR_BRANDS } from "@/lib/vehicle-constants";
 
 function YesNoField({
   name,
@@ -107,7 +110,7 @@ export default function SellPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <p className="text-xs uppercase tracking-[0.35em] text-metallic">Sell Your Vehicle</p>
+      <p className="text-xs uppercase tracking-[0.35em] text-metallic">Fahrzeug verkaufen</p>
       <h1 className="mt-3 text-3xl font-light text-white">Fahrzeug verkaufen</h1>
       <p className="mt-3 text-zinc-500">Füllen Sie das Formular aus — wir bewerten Ihr Fahrzeug schnell und fair.</p>
 
@@ -122,7 +125,24 @@ export default function SellPage() {
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
           <legend className="px-2 text-sm font-medium text-zinc-400">Fahrzeugdaten</legend>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input name="make" label="Marke" required />
+            <div>
+              <label className="block text-sm text-zinc-400">Marke</label>
+              <select
+                name="make"
+                required
+                defaultValue=""
+                className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-metallic focus:outline-none"
+              >
+                <option value="" disabled>
+                  Marke wählen…
+                </option>
+                {CAR_BRANDS.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
+              </select>
+            </div>
             <Input name="model" label="Modell" required />
             <Input name="year" label="Baujahr" type="number" min={1900} max={2030} required />
             <Input name="price" label="Aktueller Preis (€)" type="number" min={0} required />
@@ -169,14 +189,14 @@ export default function SellPage() {
 
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
           <legend className="px-2 text-sm font-medium text-zinc-400">Bilder (max. 8)</legend>
-          <input
-            type="file"
+          <ProminentFileUpload
             name="images"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
+            label="Fahrzeugbilder"
+            buttonLabel="Bilder auswählen"
             multiple
-            className="block w-full text-sm text-zinc-400 file:mr-4 file:rounded-sm file:border-0 file:bg-metallic file:px-4 file:py-2 file:text-sm file:text-black"
+            hint={`${IMAGE_FORMAT_LABEL} — max. 10 MB pro Bild · max. 8 Dateien`}
+            previewVariant="square"
           />
-          <p className="text-xs text-zinc-600">JPG, JPEG, PNG, WEBP — max. 10 MB pro Bild</p>
         </fieldset>
 
         {error && (

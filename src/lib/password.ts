@@ -12,19 +12,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 export function validatePasswordStrength(password: string): string | null {
   if (password.length < 12) {
-    return "Şifre en az 12 karakter olmalıdır.";
+    return "Das Passwort muss mindestens 12 Zeichen lang sein.";
   }
   if (!/[A-Z]/.test(password)) {
-    return "Şifre en az bir büyük harf içermelidir.";
+    return "Das Passwort muss mindestens einen Großbuchstaben enthalten.";
   }
   if (!/[a-z]/.test(password)) {
-    return "Şifre en az bir küçük harf içermelidir.";
+    return "Das Passwort muss mindestens einen Kleinbuchstaben enthalten.";
   }
   if (!/[0-9]/.test(password)) {
-    return "Şifre en az bir rakam içermelidir.";
+    return "Das Passwort muss mindestens eine Ziffer enthalten.";
   }
   if (!/[^A-Za-z0-9]/.test(password)) {
-    return "Şifre en az bir özel karakter içermelidir.";
+    return "Das Passwort muss mindestens ein Sonderzeichen enthalten.";
   }
   return null;
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCompany, getSocialLinks } from "@/lib/cms";
+import { publicNav } from "@/lib/i18n/de";
 
 export async function SiteFooter() {
   const [company, social] = await Promise.all([getCompany(), getSocialLinks()]);
@@ -11,22 +12,21 @@ export async function SiteFooter() {
           <div>
             <p className="text-sm font-semibold tracking-[0.2em] text-white">TUNC AUTO</p>
             <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              Premium automobile dealership — elegance, trust, excellence.
+              Premium-Autohaus — Eleganz, Vertrauen, Exzellenz.
             </p>
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Navigation</p>
             <div className="mt-4 flex flex-col gap-2 text-sm">
-              <Link href="/" className="text-zinc-400 hover:text-metallic">Home</Link>
-              <Link href="/hakkimizda" className="text-zinc-400 hover:text-metallic">About Us</Link>
-              <Link href="/vizyon-misyon" className="text-zinc-400 hover:text-metallic">Vision & Mission</Link>
-              <Link href="/araclar" className="text-zinc-400 hover:text-metallic">Vehicles</Link>
-              <Link href="/sat" className="text-zinc-400 hover:text-metallic">Sell Your Vehicle</Link>
-              <Link href="/iletisim" className="text-zinc-400 hover:text-metallic">Contact</Link>
+              {publicNav.map((item) => (
+                <Link key={item.href} href={item.href} className="text-zinc-400 hover:text-metallic">
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Social</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Social Media</p>
             <div className="mt-4 flex flex-col gap-2 text-sm">
               {social.map((s) => (
                 <a
@@ -58,7 +58,7 @@ export async function SiteFooter() {
           </p>
           <div className="flex gap-6 text-xs text-zinc-600">
             <Link href="/impressum" className="hover:text-zinc-400">Impressum</Link>
-            <Link href="/datenschutz" className="hover:text-zinc-400">Privacy Policy</Link>
+            <Link href="/datenschutz" className="hover:text-zinc-400">Datenschutz</Link>
           </div>
         </div>
       </div>

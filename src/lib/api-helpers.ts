@@ -15,7 +15,7 @@ export async function requireAdmin(): Promise<
 > {
   const session = await auth();
   if (!session?.user?.id) {
-    return jsonError("Yetkisiz erişim.", 401);
+    return jsonError("Nicht autorisiert.", 401);
   }
   return { session, userId: session.user.id };
 }

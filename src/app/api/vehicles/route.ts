@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
   const ip = getClientIp(request);
   const limit = rateLimit(`vehicles-post:${ip}`, 30, 60_000);
-  if (!limit.success) return jsonError("Çok fazla istek. Lütfen bekleyin.", 429);
+  if (!limit.success) return jsonError("Zu viele Anfragen. Bitte warten.", 429);
 
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const body = parseVehicleFormBody(formData);
 
     const parsed = vehicleSchema.safeParse(body);
-    if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
+    if (!parsed.success) return jsonError("Validierungsfehler.", 400);
 
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json();
   const parsed = vehicleSchema.safeParse(body);
-  if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
+  if (!parsed.success) return jsonError("Validierungsfehler.", 400);
 
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
   const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);

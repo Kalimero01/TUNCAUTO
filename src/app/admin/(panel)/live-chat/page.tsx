@@ -20,7 +20,7 @@ export default function AdminLiveChatPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white">Live Chat</h1>
+      <h1 className="text-2xl font-bold text-white">Live-Chat</h1>
       <p className="mt-2 text-sm text-zinc-500">Kunden-Chats vom Website-Widget</p>
       {conversations.length === 0 ? (
         <p className="mt-8 text-zinc-500">Keine aktiven Chats.</p>

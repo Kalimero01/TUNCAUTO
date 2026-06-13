@@ -77,7 +77,7 @@ export async function HeroSection() {
       <div className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6">
         <div className="max-w-3xl animate-fade-in">
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.35em] text-metallic">
-            Premium Automobile
+            Premium-Automobile
           </p>
           <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl lg:text-6xl">
             {hero?.title ?? heroText?.title ?? (

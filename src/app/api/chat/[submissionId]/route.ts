@@ -14,7 +14,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     where: { id: submissionId },
     select: { id: true, sellerName: true },
   });
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
 
   const messages = await prisma.chatMessage.findMany({
     where: { submissionId },
@@ -29,24 +29,24 @@ export async function POST(request: NextRequest, { params }: Params) {
   const { submissionId } = await params;
   const ip = getClientIp(request);
   const limit = rateLimit(`chat-post:${ip}`, 30, 60_000);
-  if (!limit.success) return jsonError("Çok fazla mesaj. Lütfen bekleyin.", 429);
+  if (!limit.success) return jsonError("Zu viele Nachrichten. Bitte warten.", 429);
 
   const submission = await prisma.sellerSubmission.findUnique({
     where: { id: submissionId },
     select: { id: true, sellerName: true, status: true },
   });
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
 
   const body = await request.json();
   const parsed = chatMessageSchema.safeParse(body);
-  if (!parsed.success) return jsonError("Mesaj doğrulama hatası.", 400);
+  if (!parsed.success) return jsonError("Nachrichtenvalidierung fehlgeschlagen.", 400);
 
   const content = sanitizeHtml(parsed.data.content, {
     allowedTags: [],
     allowedAttributes: {},
   }).trim();
 
-  if (!content) return jsonError("Mesaj boş olamaz.", 400);
+  if (!content) return jsonError("Nachricht darf nicht leer sein.", 400);
 
   const message = await prisma.chatMessage.create({
     data: {

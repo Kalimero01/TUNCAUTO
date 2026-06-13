@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const authResult = await requireAdmin();
     if (authResult instanceof Response) return authResult;
   } else {
-    return jsonError("Yetkisiz erişim.", 401);
+    return jsonError("Nicht autorisiert.", 401);
   }
 
   const submissions = await prisma.sellerSubmission.findMany({

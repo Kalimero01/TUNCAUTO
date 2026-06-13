@@ -102,7 +102,7 @@ export function LiveChatWidget() {
         <div className="fixed bottom-24 right-6 z-50 flex h-[28rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl sm:w-96">
           <div className="flex items-center justify-between border-b border-zinc-800 bg-anthracite px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-white">Live Chat</p>
+              <p className="text-sm font-semibold text-white">Live-Chat</p>
               <p className="text-xs text-zinc-400">TUNC AUTO Support</p>
             </div>
             <button

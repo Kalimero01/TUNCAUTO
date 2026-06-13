@@ -16,7 +16,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     where: { id: submissionId },
     select: { id: true, sellerName: true, sellerEmail: true, make: true, model: true },
   });
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
 
   await prisma.chatMessage.updateMany({
     where: { submissionId, senderType: "SELLER", isRead: false },
@@ -42,18 +42,18 @@ export async function POST(request: NextRequest, { params }: Params) {
   const submission = await prisma.sellerSubmission.findUnique({
     where: { id: submissionId },
   });
-  if (!submission) return jsonError("Başvuru bulunamadı.", 404);
+  if (!submission) return jsonError("Angebot nicht gefunden.", 404);
 
   const body = await request.json();
   const parsed = chatMessageSchema.safeParse(body);
-  if (!parsed.success) return jsonError("Mesaj doğrulama hatası.", 400);
+  if (!parsed.success) return jsonError("Nachrichtenvalidierung fehlgeschlagen.", 400);
 
   const content = sanitizeHtml(parsed.data.content, {
     allowedTags: [],
     allowedAttributes: {},
   }).trim();
 
-  if (!content) return jsonError("Mesaj boş olamaz.", 400);
+  if (!content) return jsonError("Nachricht darf nicht leer sein.", 400);
 
   const message = await prisma.chatMessage.create({
     data: {

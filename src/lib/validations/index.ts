@@ -2,18 +2,18 @@ import { z } from "zod";
 import { ALL_EQUIPMENT_FEATURES, FUEL_TYPES, TRANSMISSION_TYPES } from "@/lib/vehicle-constants";
 
 export const loginSchema = z.object({
-  login: z.string().min(1, "Kullanıcı adı veya e-posta gerekli."),
-  password: z.string().min(1, "Şifre gerekli."),
+  login: z.string().min(1, "Benutzername oder E-Mail erforderlich."),
+  password: z.string().min(1, "Passwort erforderlich."),
 });
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Mevcut şifre gerekli."),
-    newPassword: z.string().min(12, "Yeni şifre en az 12 karakter olmalıdır."),
-    confirmPassword: z.string().min(1, "Şifre tekrarı gerekli."),
+    currentPassword: z.string().min(1, "Aktuelles Passwort erforderlich."),
+    newPassword: z.string().min(12, "Das neue Passwort muss mindestens 12 Zeichen lang sein."),
+    confirmPassword: z.string().min(1, "Passwortbestätigung erforderlich."),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Yeni şifreler eşleşmiyor.",
+    message: "Die neuen Passwörter stimmen nicht überein.",
     path: ["confirmPassword"],
   });
 

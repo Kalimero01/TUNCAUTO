@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     include: { files: true, equipment: true },
   });
 
-  if (!vehicle) return jsonError("Araç bulunamadı.", 404);
+  if (!vehicle) return jsonError("Fahrzeug nicht gefunden.", 404);
   return jsonData(serializeVehicle(vehicle));
 }
 
@@ -36,10 +36,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const parsed = vehicleSchema.partial().safeParse(body);
-  if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
+  if (!parsed.success) return jsonError("Validierungsfehler.", 400);
 
   const existing = await prisma.vehicle.findUnique({ where: { id } });
-  if (!existing) return jsonError("Araç bulunamadı.", 404);
+  if (!existing) return jsonError("Fahrzeug nicht gefunden.", 404);
 
   const firstRegistration =
     parsed.data.firstRegistration !== undefined
@@ -91,10 +91,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   };
 
   const fullParsed = vehicleSchema.safeParse(merged);
-  if (!fullParsed.success) return jsonError("Doğrulama hatası.", 400);
+  if (!fullParsed.success) return jsonError("Validierungsfehler.", 400);
 
   const vehicle = await updateVehicleRecord(id, fullParsed.data);
-  if (!vehicle) return jsonError("Araç bulunamadı.", 404);
+  if (!vehicle) return jsonError("Fahrzeug nicht gefunden.", 404);
 
   return jsonData(serializeVehicle(vehicle));
 }

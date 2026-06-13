@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
-const nav = [
-  { href: "/", label: "Home" },
-  { href: "/hakkimizda", label: "About Us" },
-  { href: "/vizyon-misyon", label: "Vision & Mission" },
-  { href: "/araclar", label: "Vehicles" },
-  { href: "/sat", label: "Sell Your Vehicle" },
-  { href: "/iletisim", label: "Contact" },
-];
+import { publicNav } from "@/lib/i18n/de";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -35,7 +27,7 @@ export function MobileNav() {
       {open && (
         <div className="absolute left-0 right-0 top-full border-b border-zinc-800 bg-black/95 px-4 py-4 backdrop-blur-xl">
           <nav className="flex flex-col gap-3">
-            {nav.map((item) => (
+            {publicNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

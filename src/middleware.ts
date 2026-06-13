@@ -14,7 +14,7 @@ export default auth((req) => {
     pathname.startsWith("/api/chat/admin");
 
   if (isApiAdminRoute && !req.auth) {
-    return Response.json({ error: "Yetkisiz erişim." }, { status: 401 });
+    return Response.json({ error: "Nicht autorisiert." }, { status: 401 });
   }
 });
 

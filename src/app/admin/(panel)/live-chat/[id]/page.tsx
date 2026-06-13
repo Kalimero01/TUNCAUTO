@@ -52,7 +52,7 @@ export default function AdminLiveChatDetailPage() {
 
   return (
     <div>
-      <Link href="/admin/live-chat" className="text-sm text-zinc-500 hover:text-white">← Live Chat</Link>
+      <Link href="/admin/live-chat" className="text-sm text-zinc-500 hover:text-white">← Live-Chat</Link>
       <h1 className="mt-4 text-xl font-bold text-white">Chat mit {customerName}</h1>
       <div className="mt-6 flex h-[28rem] flex-col rounded-sm border border-zinc-800">
         <div className="flex-1 space-y-2 overflow-y-auto p-4">

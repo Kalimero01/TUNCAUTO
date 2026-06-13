@@ -26,6 +26,12 @@ type Submission = {
   videos: Array<{ id: string; url: string }>;
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Offen",
+  APPROVED: "Genehmigt",
+  REJECTED: "Abgelehnt",
+};
+
 export default function SubmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -60,13 +66,13 @@ export default function SubmissionDetailPage() {
     }
   }
 
-  if (loading) return <p className="text-zinc-500">Yükleniyor...</p>;
-  if (!submission) return <p className="text-zinc-500">Başvuru bulunamadı.</p>;
+  if (loading) return <p className="text-zinc-500">Wird geladen...</p>;
+  if (!submission) return <p className="text-zinc-500">Angebot nicht gefunden.</p>;
 
   return (
     <div>
       <Link href="/admin/submissions" className="text-sm text-brand-400 hover:text-brand-300">
-        ← Başvurular
+        ← Angebote
       </Link>
 
       <div className="mt-4 flex items-start justify-between">
@@ -80,20 +86,20 @@ export default function SubmissionDetailPage() {
           </p>
         </div>
         <span className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-400">
-          {submission.status}
+          {STATUS_LABELS[submission.status] ?? submission.status}
         </span>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="space-y-6">
-          <InfoBlock title="Fiyat" value={formatPrice(submission.price)} />
-          <InfoBlock title="Kilometre" value={formatMileage(submission.mileage)} />
-          <InfoBlock title="Yakıt" value={submission.fuelType ?? "—"} />
-          <InfoBlock title="Vites" value={submission.transmission ?? "—"} />
-          <InfoBlock title="Renk" value={submission.color ?? "—"} />
+          <InfoBlock title="Preis" value={formatPrice(submission.price)} />
+          <InfoBlock title="Kilometerstand" value={formatMileage(submission.mileage)} />
+          <InfoBlock title="Kraftstoff" value={submission.fuelType ?? "—"} />
+          <InfoBlock title="Getriebe" value={submission.transmission ?? "—"} />
+          <InfoBlock title="Farbe" value={submission.color ?? "—"} />
           {submission.description && (
             <div>
-              <h3 className="text-sm text-zinc-500">Açıklama</h3>
+              <h3 className="text-sm text-zinc-500">Beschreibung</h3>
               <p className="mt-1 whitespace-pre-wrap text-zinc-300">{submission.description}</p>
             </div>
           )}
@@ -118,7 +124,7 @@ export default function SubmissionDetailPage() {
       {submission.status === "PENDING" && (
         <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-zinc-800 p-6 sm:flex-row sm:items-end">
           <div className="flex-1">
-            <label className="block text-sm text-zinc-400">Red notu (opsiyonel)</label>
+            <label className="block text-sm text-zinc-400">Ablehnungsgrund (optional)</label>
             <input
               value={rejectNotes}
               onChange={(e) => setRejectNotes(e.target.value)}
@@ -130,14 +136,14 @@ export default function SubmissionDetailPage() {
             disabled={actionLoading}
             className="rounded-full border border-red-800 px-6 py-2.5 text-sm text-red-400 hover:bg-red-950/30 disabled:opacity-50"
           >
-            Reddet
+            Ablehnen
           </button>
           <button
             onClick={() => handleAction("approve")}
             disabled={actionLoading}
             className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
           >
-            Onayla & Yayınla
+            Genehmigen & Veröffentlichen
           </button>
         </div>
       )}
@@ -147,7 +153,7 @@ export default function SubmissionDetailPage() {
           href={`/admin/chat/${id}`}
           className="inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-400"
         >
-          Mesajlaş
+          Nachrichten
         </Link>
       </div>
     </div>

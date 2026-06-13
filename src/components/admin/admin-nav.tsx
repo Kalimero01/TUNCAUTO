@@ -3,28 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-const links = [
-  { href: "/admin", label: "Dashboard", exact: true },
-  { href: "/admin/homepage", label: "Homepage" },
-  { href: "/admin/about", label: "About Us" },
-  { href: "/admin/vision-mission", label: "Vision & Mission" },
-  { href: "/admin/vehicles", label: "Vehicles" },
-  { href: "/admin/submissions", label: "Offers" },
-  { href: "/admin/social", label: "Social Media" },
-  { href: "/admin/contact", label: "Contact" },
-  { href: "/admin/impressum", label: "Impressum" },
-  { href: "/admin/live-chat", label: "Live Chat" },
-  { href: "/admin/chat", label: "Offer Chat" },
-];
+import { adminNav } from "@/lib/i18n/de";
 
 export function AdminNav({ mobile = false }: { mobile?: boolean }) {
   const pathname = usePathname();
 
   return (
     <nav className={cn(mobile ? "flex gap-3 overflow-x-auto" : "space-y-1 p-4")}>
-      {links.map((link) => {
-        const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
+      {adminNav.map((link) => {
+        const active = "exact" in link && link.exact ? pathname === link.href : pathname.startsWith(link.href);
         return (
           <Link
             key={link.href}

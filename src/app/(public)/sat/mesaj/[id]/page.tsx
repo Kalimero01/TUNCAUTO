@@ -60,12 +60,12 @@ export default function SellerChatPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col px-4 py-8 sm:px-6" style={{ minHeight: "60vh" }}>
-      <h1 className="mb-6 text-xl font-bold text-white">Destek Mesajları</h1>
+      <h1 className="mb-6 text-xl font-bold text-white">Support-Nachrichten</h1>
 
       <div className="flex-1 space-y-3 overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-        {loading && <p className="text-sm text-zinc-500">Yükleniyor...</p>}
+        {loading && <p className="text-sm text-zinc-500">Wird geladen...</p>}
         {!loading && messages.length === 0 && (
-          <p className="text-sm text-zinc-500">Henüz mesaj yok. Sorularınızı yazabilirsiniz.</p>
+          <p className="text-sm text-zinc-500">Noch keine Nachrichten. Stellen Sie gerne Ihre Fragen.</p>
         )}
         {messages.map((msg) => (
           <div
@@ -88,14 +88,14 @@ export default function SellerChatPage() {
           type="text"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Mesajınız..."
+          placeholder="Ihre Nachricht..."
           className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-brand-500 focus:outline-none"
         />
         <button
           type="submit"
           className="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-400"
         >
-          Gönder
+          Senden
         </button>
       </form>
     </div>

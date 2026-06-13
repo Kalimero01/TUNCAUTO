@@ -16,7 +16,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     include: { files: { where: { type: "IMAGE" } } },
   });
 
-  if (!vehicle) return jsonError("Araç bulunamadı.", 404);
+  if (!vehicle) return jsonError("Fahrzeug nicht gefunden.", 404);
 
   const formData = await request.formData();
   const images = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);

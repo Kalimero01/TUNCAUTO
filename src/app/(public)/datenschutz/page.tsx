@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getCompany } from "@/lib/cms";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Datenschutz",
   robots: { index: true, follow: true },
 };
 
