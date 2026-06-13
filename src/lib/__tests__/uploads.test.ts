@@ -15,7 +15,7 @@ describe("validateUpload", () => {
   it("rejects invalid image mime types", () => {
     const result = validateUpload(mockFile("doc.pdf", "application/pdf", 1024), "IMAGE");
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toMatch(/Geçersiz görsel/);
+    if (!result.ok) expect(result.error).toMatch(/Ungültiges Bild/);
   });
 
   it("rejects oversized images", () => {

@@ -6,10 +6,16 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/admin", label: "Dashboard", exact: true },
-  { href: "/admin/vehicles", label: "Araçlar" },
-  { href: "/admin/submissions", label: "Başvurular" },
-  { href: "/admin/chat", label: "Mesajlar" },
-  { href: "/admin/settings", label: "Ayarlar" },
+  { href: "/admin/homepage", label: "Homepage" },
+  { href: "/admin/about", label: "About Us" },
+  { href: "/admin/vision-mission", label: "Vision & Mission" },
+  { href: "/admin/vehicles", label: "Vehicles" },
+  { href: "/admin/submissions", label: "Offers" },
+  { href: "/admin/social", label: "Social Media" },
+  { href: "/admin/contact", label: "Contact" },
+  { href: "/admin/impressum", label: "Impressum" },
+  { href: "/admin/live-chat", label: "Live Chat" },
+  { href: "/admin/chat", label: "Offer Chat" },
 ];
 
 export function AdminNav({ mobile = false }: { mobile?: boolean }) {
@@ -24,9 +30,9 @@ export function AdminNav({ mobile = false }: { mobile?: boolean }) {
             key={link.href}
             href={link.href}
             className={cn(
-              "block rounded-lg px-3 py-2 text-sm transition",
+              "block rounded-sm px-3 py-2 text-sm transition",
               active
-                ? "bg-brand-500/20 text-brand-400"
+                ? "bg-metallic/20 text-metallic"
                 : "text-zinc-400 hover:bg-zinc-800 hover:text-white",
               mobile && "whitespace-nowrap"
             )}

@@ -29,8 +29,11 @@ export function serializeVehicle(vehicle: {
   mileage: number | null;
   fuelType: string | null;
   transmission: string | null;
+  horsepower: number | null;
   color: string | null;
   description: string | null;
+  financingOffer: string | null;
+  financingUrl: string | null;
   features: string[];
   status: string;
   slug: string;
@@ -42,13 +45,23 @@ export function serializeVehicle(vehicle: {
     mimeType: string;
     type: string;
     originalName: string;
+    sortOrder?: number;
   }>;
+  equipment?: Array<{ id: string; name: string; sortOrder: number }>;
 }) {
+  const images =
+    vehicle.files
+      ?.filter((f) => f.type === "IMAGE")
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+      .slice(0, 10)
+      .map(formatFile) ?? [];
+
   return {
     ...vehicle,
     price: vehicle.price.toString(),
-    images: vehicle.files?.filter((f) => f.type === "IMAGE").map(formatFile) ?? [],
+    images,
     videos: vehicle.files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
+    equipment: vehicle.equipment?.sort((a, b) => a.sortOrder - b.sortOrder).map((e) => e.name) ?? [],
     files: undefined,
   };
 }
@@ -62,11 +75,18 @@ export function serializeSubmission(submission: {
   model: string;
   year: number;
   price: { toString(): string } | number;
+  desiredPrice: { toString(): string } | number | null;
   mileage: number | null;
   fuelType: string | null;
   transmission: string | null;
   color: string | null;
   description: string | null;
+  hasAccident: boolean | null;
+  accidentDetails: string | null;
+  hasRepaint: boolean | null;
+  repaintDetails: string | null;
+  hasPartsReplaced: boolean | null;
+  partsDetails: string | null;
   status: string;
   adminNotes: string | null;
   createdAt: Date;
@@ -83,6 +103,7 @@ export function serializeSubmission(submission: {
   return {
     ...submission,
     price: submission.price.toString(),
+    desiredPrice: submission.desiredPrice?.toString() ?? null,
     images: submission.files?.filter((f) => f.type === "IMAGE").map(formatFile) ?? [],
     videos: submission.files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
     unreadMessages: submission._count?.chatMessages,

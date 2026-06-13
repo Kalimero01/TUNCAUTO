@@ -4,6 +4,17 @@ import { getBaseUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+const staticPages = [
+  "",
+  "/araclar",
+  "/sat",
+  "/hakkimizda",
+  "/vizyon-misyon",
+  "/iletisim",
+  "/impressum",
+  "/datenschutz",
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
   let vehicles: Array<{ slug: string; updatedAt: Date }> = [];
@@ -18,10 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    { url: `${baseUrl}/araclar`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${baseUrl}/sat`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${baseUrl}/hakkimizda`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    ...staticPages.map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: new Date(),
+      changeFrequency: path === "" || path === "/araclar" ? ("daily" as const) : ("monthly" as const),
+      priority: path === "" ? 1 : path === "/araclar" ? 0.9 : 0.6,
+    })),
     ...vehicles.map((v) => ({
       url: `${baseUrl}/araclar/${v.slug}`,
       lastModified: v.updatedAt,

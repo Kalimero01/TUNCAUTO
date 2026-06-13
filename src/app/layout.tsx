@@ -19,17 +19,17 @@ const baseUrl = getBaseUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "TUNCAUTO | Premium Araç Galerisi",
-    template: "%s | TUNCAUTO",
+    default: "TUNC AUTO | Premium Automobile",
+    template: "%s | TUNC AUTO",
   },
   description:
-    "TUNCAUTO — kaliteli ikinci el ve sıfır araçlar. Güvenilir alım-satım, profesyonel hizmet.",
+    "TUNC AUTO — Premium automobile dealership. Exklusive Fahrzeuge, Finanzierung und professioneller An- und Verkauf.",
   openGraph: {
     type: "website",
-    locale: "tr_TR",
-    siteName: "TUNCAUTO",
-    title: "TUNCAUTO | Premium Araç Galerisi",
-    description: "Kaliteli araçlar, güvenilir alım-satım.",
+    locale: "de_DE",
+    siteName: "TUNC AUTO",
+    title: "TUNC AUTO | Premium Automobile",
+    description: "Exklusive Fahrzeuge. Vertrauen. Eleganz.",
   },
   robots: { index: true, follow: true },
   icons: {
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
-      <body className="min-h-full bg-zinc-950 text-zinc-100 antialiased">
+    <html lang="de" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+      <body className="min-h-full bg-black text-zinc-100 antialiased">
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

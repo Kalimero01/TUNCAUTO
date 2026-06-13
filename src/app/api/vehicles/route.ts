@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       ...(status ? { status: status as "AVAILABLE" | "SOLD" | "RESERVED" } : {}),
       ...(!admin ? { status: "AVAILABLE" } : {}),
     },
-    include: { files: true },
-    orderBy: { createdAt: "desc" },
+    include: { files: true, equipment: true },
+    orderBy: admin ? { createdAt: "desc" } : [{ make: "asc" }, { model: "asc" }],
   });
 
   return jsonData(vehicles.map(serializeVehicle));
@@ -35,22 +35,90 @@ export async function POST(request: NextRequest) {
   const limit = rateLimit(`vehicles-post:${ip}`, 30, 60_000);
   if (!limit.success) return jsonError("Çok fazla istek. Lütfen bekleyin.", 429);
 
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await request.formData();
+    const equipmentRaw = formData.get("equipment");
+    const equipment =
+      typeof equipmentRaw === "string"
+        ? equipmentRaw.split("\n").map((s) => s.trim()).filter(Boolean)
+        : [];
+
+    const body = {
+      make: formData.get("make"),
+      model: formData.get("model"),
+      year: formData.get("year"),
+      price: formData.get("price"),
+      mileage: formData.get("mileage") || null,
+      fuelType: formData.get("fuelType") || null,
+      transmission: formData.get("transmission") || null,
+      horsepower: formData.get("horsepower") || null,
+      color: formData.get("color") || null,
+      description: formData.get("description") || null,
+      financingOffer: formData.get("financingOffer") || null,
+      financingUrl: formData.get("financingUrl") || null,
+      equipment,
+    };
+
+    const parsed = vehicleSchema.safeParse(body);
+    if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
+
+    const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+    const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);
+    const { equipment: equipList, ...vehicleData } = parsed.data;
+
+    const vehicle = await prisma.vehicle.create({
+      data: {
+        ...vehicleData,
+        financingUrl: vehicleData.financingUrl || null,
+        slug,
+        features: parsed.data.features ?? [],
+        equipment: {
+          create: (equipList ?? []).map((name, i) => ({ name, sortOrder: i })),
+        },
+      },
+      include: { files: true, equipment: true },
+    });
+
+    const images = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
+    if (images.length > 10) return jsonError("Maximal 10 Bilder.", 400);
+
+    const { saveUpload } = await import("@/lib/uploads");
+    for (let i = 0; i < images.length; i++) {
+      const saved = await saveUpload(images[i], "IMAGE");
+      await prisma.fileUpload.create({
+        data: { ...saved, vehicleId: vehicle.id, sortOrder: i },
+      });
+    }
+
+    const full = await prisma.vehicle.findUnique({
+      where: { id: vehicle.id },
+      include: { files: true, equipment: true },
+    });
+
+    return jsonData(serializeVehicle(full!), 201);
+  }
+
   const body = await request.json();
   const parsed = vehicleSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError("Doğrulama hatası.", 400);
-  }
+  if (!parsed.success) return jsonError("Doğrulama hatası.", 400);
 
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
   const slug = vehicleSlug(parsed.data.make, parsed.data.model, parsed.data.year, id);
+  const { equipment: equipList, ...vehicleData } = parsed.data;
 
   const vehicle = await prisma.vehicle.create({
     data: {
-      ...parsed.data,
+      ...vehicleData,
+      financingUrl: vehicleData.financingUrl || null,
       slug,
       features: parsed.data.features ?? [],
+      equipment: {
+        create: (equipList ?? []).map((name, i) => ({ name, sortOrder: i })),
+      },
     },
-    include: { files: true },
+    include: { files: true, equipment: true },
   });
 
   return jsonData(serializeVehicle(vehicle), 201);
