@@ -25,15 +25,7 @@ export async function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/araclar"
-            className="hidden rounded-sm border border-metallic/50 bg-metallic/10 px-4 py-2 text-sm font-medium tracking-wide text-metallic transition hover:bg-metallic/20 sm:inline-flex"
-          >
-            Fahrzeuge
-          </Link>
-          <MobileNav />
-        </div>
+        <MobileNav />
       </div>
     </header>
   );
