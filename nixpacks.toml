@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_22"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["node scripts/railway-build.mjs"]
+
+[start]
+cmd = "node scripts/railway-start.mjs"
