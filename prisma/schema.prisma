@@ -25,7 +25,6 @@ enum VehicleStatus {
 
 enum MessageSender {
   ADMIN
-  SELLER
   CUSTOMER
 }
 
@@ -152,7 +151,7 @@ model SellerSubmission {
   id               String           @id @default(cuid())
   sellerName       String
   sellerEmail      String
-  sellerPhone      String?
+  sellerPhone      String
   make             String
   model            String
   year             Int
@@ -174,7 +173,6 @@ model SellerSubmission {
   adminNotes       String?
   vehicle          Vehicle?
   files            FileUpload[]     @relation("SubmissionFiles")
-  chatMessages     ChatMessage[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
@@ -196,17 +194,14 @@ model ChatConversation {
 
 model ChatMessage {
   id             String            @id @default(cuid())
-  submissionId   String?
-  submission     SellerSubmission? @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  conversationId String?
-  conversation   ChatConversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation   ChatConversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderType     MessageSender
   senderName     String
   content        String
   isRead         Boolean           @default(false)
   createdAt      DateTime          @default(now())
 
-  @@index([submissionId, createdAt])
   @@index([conversationId, createdAt])
   @@map("chat_messages")
 }

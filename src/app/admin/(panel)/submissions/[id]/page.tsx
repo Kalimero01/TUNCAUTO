@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { SellerContactCard } from "@/components/admin/seller-contact";
+import { de, submissionLabels } from "@/lib/i18n/de";
 import { formatMileage, formatPrice } from "@/lib/utils";
 
 type Submission = {
   id: string;
   sellerName: string;
   sellerEmail: string;
-  sellerPhone: string | null;
+  sellerPhone: string;
   make: string;
   model: string;
   year: number;
@@ -49,24 +51,26 @@ export default function SubmissionDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (loading) return <p className="text-zinc-500">Wird geladen...</p>;
-  if (!submission) return <p className="text-zinc-500">Angebot nicht gefunden.</p>;
+  if (loading) return <p className="text-zinc-500">{de.loading}</p>;
+  if (!submission) return <p className="text-zinc-500">{de.submissionNotFound}</p>;
 
   return (
     <div>
       <Link href="/admin/submissions" className="text-sm text-brand-400 hover:text-brand-300">
-        ← Angebote
+        {submissionLabels.backToOffers}
       </Link>
 
-      <div className="mt-4 flex items-start justify-between">
+      <SellerContactCard
+        name={submission.sellerName}
+        email={submission.sellerEmail}
+        phone={submission.sellerPhone}
+      />
+
+      <div className="mt-6 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">
             {submission.make} {submission.model} {submission.year}
           </h1>
-          <p className="mt-1 text-zinc-500">
-            {submission.sellerName} — {submission.sellerEmail}
-            {submission.sellerPhone && ` — ${submission.sellerPhone}`}
-          </p>
         </div>
         <span
           className={`rounded-full border px-3 py-1 text-xs ${

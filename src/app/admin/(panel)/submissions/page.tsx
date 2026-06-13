@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SellerContactSummary } from "@/components/admin/seller-contact";
+import { de, submissionLabels } from "@/lib/i18n/de";
 import { formatPrice } from "@/lib/utils";
 
 type Submission = {
   id: string;
   sellerName: string;
   sellerEmail: string;
+  sellerPhone: string;
   make: string;
   model: string;
   year: number;
@@ -42,7 +45,7 @@ export default function AdminSubmissionsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Verkaufsangebote</h1>
+        <h1 className="text-2xl font-bold text-white">{submissionLabels.offersTitle}</h1>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value as "ALL" | "UNREAD" | "READ")}
@@ -55,9 +58,9 @@ export default function AdminSubmissionsPage() {
       </div>
 
       {loading ? (
-        <p className="mt-8 text-zinc-500">Wird geladen...</p>
+        <p className="mt-8 text-zinc-500">{de.loading}</p>
       ) : filtered.length === 0 ? (
-        <p className="mt-8 text-zinc-500">Keine Angebote gefunden.</p>
+        <p className="mt-8 text-zinc-500">{submissionLabels.noOffers}</p>
       ) : (
         <div className="mt-8 space-y-3">
           {filtered.map((s) => (
@@ -74,9 +77,13 @@ export default function AdminSubmissionsPage() {
                   <p className="font-medium text-white">
                     {s.make} {s.model} {s.year}
                   </p>
-                  <p className="text-sm text-zinc-500">
-                    {s.sellerName} — {s.sellerEmail}
-                  </p>
+                  <div className="mt-1">
+                    <SellerContactSummary
+                      name={s.sellerName}
+                      email={s.sellerEmail}
+                      phone={s.sellerPhone}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="text-right">

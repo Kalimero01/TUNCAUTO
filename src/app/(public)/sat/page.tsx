@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ProminentFileUpload } from "@/components/admin/prominent-file-upload";
 import { IMAGE_FORMAT_LABEL } from "@/lib/upload-constants";
+import { submissionLabels } from "@/lib/i18n/de";
 import { CAR_BRANDS } from "@/lib/vehicle-constants";
 
 function YesNoField({
@@ -118,10 +119,10 @@ export default function SellPage() {
 
       <form onSubmit={handleSubmit} className="mt-12 space-y-8">
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
-          <legend className="px-2 text-sm font-medium text-zinc-400">Kontakt</legend>
-          <Input name="sellerName" label="Name" required />
-          <Input name="sellerEmail" label="E-Mail" type="email" required />
-          <Input name="sellerPhone" label="Telefon" type="tel" />
+          <legend className="px-2 text-sm font-medium text-zinc-400">{submissionLabels.contact}</legend>
+          <Input name="sellerName" label={submissionLabels.name} required />
+          <Input name="sellerEmail" label={submissionLabels.email} type="email" required />
+          <Input name="sellerPhone" label={submissionLabels.phone} type="tel" required />
         </fieldset>
 
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">

@@ -63,7 +63,7 @@ const yesNoDetails = z
 export const submissionSchema = z.object({
   sellerName: z.string().min(2).max(100),
   sellerEmail: z.string().email(),
-  sellerPhone: z.string().max(20).optional().nullable(),
+  sellerPhone: z.string().min(3).max(20),
   make: z.string().min(1).max(100),
   model: z.string().min(1).max(100),
   year: z.coerce.number().int().min(1900).max(new Date().getFullYear() + 1),
@@ -88,10 +88,6 @@ export const liveChatStartSchema = z.object({
   customerName: z.string().min(2).max(100),
 });
 
-export const rejectSubmissionSchema = z.object({
-  adminNotes: z.string().max(2000).optional().nullable(),
-});
-
 export const homeTextSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1).max(10000),
@@ -106,9 +102,14 @@ export const aboutSchema = z.object({
 
 export const companySchema = z.object({
   name: z.string().min(1).max(200),
+  owner: z.string().max(200),
+  street: z.string().max(200),
+  postalCode: z.string().max(20),
+  city: z.string().max(100),
   address: z.string().min(1).max(500),
   phone: z.string().min(1).max(50),
   email: z.string().email(),
+  taxId: z.string().max(50),
   mapEmbedUrl: z.string().max(2000).optional().nullable(),
   impressum: z.string().min(1).max(50000),
   privacyPolicy: z.string().min(1).max(50000),

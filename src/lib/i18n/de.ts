@@ -5,17 +5,22 @@ export const de = {
   vehicleNotFound: "Fahrzeug nicht gefunden.",
   submissionNotFound: "Angebot nicht gefunden.",
   tooManyRequests: "Zu viele Anfragen. Bitte warten.",
-  tooManyMessages: "Zu viele Nachrichten. Bitte warten.",
   tooManyAttempts: "Zu viele Versuche. Bitte warten.",
-  messageValidationError: "Nachrichtenvalidierung fehlgeschlagen.",
-  messageEmpty: "Nachricht darf nicht leer sein.",
-  submissionAlreadyProcessed: "Dieses Angebot wurde bereits bearbeitet.",
-  invalidAction: "Ungültige Aktion.",
   userNotFound: "Benutzer nicht gefunden.",
   wrongPassword: "Aktuelles Passwort ist falsch.",
   passwordMustDiffer: "Das neue Passwort muss sich vom aktuellen unterscheiden.",
   loading: "Wird geladen...",
   logout: "Abmelden",
+} as const;
+
+export const submissionLabels = {
+  contact: "Kontakt",
+  name: "Name",
+  email: "E-Mail",
+  phone: "Telefon",
+  offersTitle: "Verkaufsangebote",
+  noOffers: "Keine Angebote gefunden.",
+  backToOffers: "← Angebote",
 } as const;
 
 export const publicNav = [

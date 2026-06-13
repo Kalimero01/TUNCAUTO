@@ -5,13 +5,16 @@ const prisma = new PrismaClient();
 
 const companyData = {
   name: "Tunc Automobile",
+  owner: "Serkan Tunc",
+  street: "Südstr. 48a",
+  postalCode: "59227",
+  city: "Ahlen",
   address: "Südstr. 48a\n59227 Ahlen\nDeutschland",
   phone: "01787306033",
   email: "tuncautomobile2022@gmail.com",
+  taxId: "DE349004935",
   mapEmbedUrl: null as string | null,
-  impressum: `Impressum
-
-Angaben gemäß § 5 TMG
+  impressum: `Angaben gemäß § 5 TMG
 
 Tunc Automobile
 Inhaber: Serkan Tunc

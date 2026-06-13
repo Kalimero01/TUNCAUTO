@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/admin/chat", destination: "/admin/submissions", permanent: true },
+      { source: "/admin/chat/:id", destination: "/admin/submissions/:id", permanent: true },
+      { source: "/sat/mesaj/:id", destination: "/sat", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
     unoptimized: process.env.NODE_ENV === "production",

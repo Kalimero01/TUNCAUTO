@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   const raw = {
     sellerName: formData.get("sellerName"),
     sellerEmail: formData.get("sellerEmail"),
-    sellerPhone: formData.get("sellerPhone") || null,
+    sellerPhone: formData.get("sellerPhone"),
     make: formData.get("make"),
     model: formData.get("model"),
     year: formData.get("year"),

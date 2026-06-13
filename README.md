@@ -60,8 +60,8 @@ Admin: http://localhost:3000/admin/login
 ## Özellikler
 
 - **Halka açık site:** Araç listeleme/detay, satıcı başvuru formu, SEO
-- **Admin panel:** Auth, dashboard, araç CRUD, başvuru onay/red, chat, şifre yönetimi
-- **API:** Vehicles, submissions, chat, uploads, health
+- **Admin panel:** Auth, dashboard, araç CRUD, başvuru yönetimi, live-chat, şifre yönetimi
+- **API:** Vehicles, submissions, live-chat, uploads, health
 - **Güvenlik:** bcrypt, rate limiting, CSRF (Auth.js), input sanitization, secure cookies
 - **Dosya yükleme:** Görsel (10MB) ve video (100MB) validasyonu
 

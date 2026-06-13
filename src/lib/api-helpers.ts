@@ -86,7 +86,7 @@ export function serializeSubmission(submission: {
   id: string;
   sellerName: string;
   sellerEmail: string;
-  sellerPhone: string | null;
+  sellerPhone: string;
   make: string;
   model: string;
   year: number;
