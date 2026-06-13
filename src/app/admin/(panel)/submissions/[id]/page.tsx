@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SellerContactCard } from "@/components/admin/seller-contact";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { de, submissionLabels } from "@/lib/i18n/de";
 import { formatMileage, formatPrice } from "@/lib/utils";
 
@@ -38,6 +39,7 @@ export default function SubmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   async function load() {
     const res = await fetch(`/api/submissions/${id}`);
@@ -118,11 +120,23 @@ export default function SubmissionDetailPage() {
 
         <div>
           {submission.images.length > 0 && (
-            <div className="grid grid-cols-2 gap-2">
-              {submission.images.map((img) => (
-                <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl bg-zinc-800">
-                  <Image src={img.url} alt="" fill className="object-cover" unoptimized />
-                </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {submission.images.map((img, index) => (
+                <button
+                  key={img.id}
+                  type="button"
+                  onClick={() => setLightboxIndex(index)}
+                  className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-zinc-800 ring-1 ring-zinc-700 transition hover:ring-brand-500/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  aria-label={`Bild ${index + 1} vergrößern`}
+                >
+                  <Image
+                    src={img.url}
+                    alt={`${submission.make} ${submission.model} – Bild ${index + 1}`}
+                    fill
+                    className="object-cover transition group-hover:scale-105"
+                    unoptimized
+                  />
+                </button>
               ))}
             </div>
           )}
@@ -131,6 +145,19 @@ export default function SubmissionDetailPage() {
           ))}
         </div>
       </div>
+
+      {lightboxIndex !== null && submission.images.length > 0 && (
+        <ImageLightbox
+          images={submission.images.map((img, index) => ({
+            id: img.id,
+            url: img.url,
+            alt: `${submission.make} ${submission.model} – Bild ${index + 1}`,
+          }))}
+          activeIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </div>
   );
 }
