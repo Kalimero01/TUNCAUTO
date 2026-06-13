@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Message = {
@@ -13,6 +13,7 @@ type Message = {
 
 export default function AdminLiveChatDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [content, setContent] = useState("");
@@ -38,6 +39,12 @@ export default function AdminLiveChatDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  async function handleDelete() {
+    if (!confirm("Möchten Sie diesen Chat wirklich löschen?")) return;
+    const res = await fetch(`/api/live-chat/admin/${id}`, { method: "DELETE" });
+    if (res.ok) router.push("/admin/live-chat");
+  }
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim()) return;
@@ -52,7 +59,16 @@ export default function AdminLiveChatDetailPage() {
 
   return (
     <div>
-      <Link href="/admin/live-chat" className="text-sm text-zinc-500 hover:text-white">← Live-Chat</Link>
+      <div className="flex items-center justify-between">
+        <Link href="/admin/live-chat" className="text-sm text-zinc-500 hover:text-white">← Live-Chat</Link>
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="text-sm text-red-400 hover:text-red-300"
+        >
+          Löschen
+        </button>
+      </div>
       <h1 className="mt-4 text-xl font-bold text-white">Chat mit {customerName}</h1>
       <div className="mt-6 flex h-[28rem] flex-col rounded-sm border border-zinc-800">
         <div className="flex-1 space-y-2 overflow-y-auto p-4">

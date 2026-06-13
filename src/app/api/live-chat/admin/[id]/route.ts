@@ -63,3 +63,15 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   return jsonData(message, 201);
 }
+
+export async function DELETE(_request: NextRequest, { params }: Params) {
+  const authResult = await requireAdmin();
+  if (authResult instanceof Response) return authResult;
+
+  const { id } = await params;
+  const conversation = await prisma.chatConversation.findUnique({ where: { id } });
+  if (!conversation) return jsonError("Chat nicht gefunden.", 404);
+
+  await prisma.chatConversation.delete({ where: { id } });
+  return new Response(null, { status: 204 });
+}
