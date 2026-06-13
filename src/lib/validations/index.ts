@@ -81,7 +81,10 @@ export const submissionSchema = z.object({
 
 export const chatMessageSchema = z.object({
   content: z.string().min(1).max(2000),
-  senderName: z.string().min(1).max(100).optional(),
+  senderName: z.preprocess(
+    (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+    z.string().min(1).max(100).optional()
+  ),
 });
 
 export const liveChatStartSchema = z.object({

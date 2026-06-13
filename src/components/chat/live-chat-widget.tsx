@@ -10,6 +10,15 @@ type Message = {
   createdAt: string;
 };
 
+async function readApiError(res: Response, fallback: string) {
+  try {
+    const json = await res.json();
+    return typeof json.error === "string" ? json.error : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function LiveChatWidget() {
   const [open, setOpen] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -18,7 +27,17 @@ export function LiveChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  function clearChatSession() {
+    sessionStorage.removeItem("tuncauto-chat-id");
+    sessionStorage.removeItem("tuncauto-chat-name");
+    setConversationId(null);
+    setCustomerName("");
+    setMessages([]);
+  }
 
   useEffect(() => {
     const stored = sessionStorage.getItem("tuncauto-chat-id");
@@ -29,9 +48,19 @@ export function LiveChatWidget() {
 
   async function fetchMessages(id: string) {
     const res = await fetch(`/api/live-chat/${id}`);
+    if (res.status === 404) {
+      clearChatSession();
+      setError("Chat nicht mehr verfügbar. Bitte starten Sie einen neuen Chat.");
+      return;
+    }
     if (res.ok) {
       const json = await res.json();
       setMessages(json.data.messages ?? []);
+      const name = json.data.conversation?.customerName;
+      if (name) {
+        setCustomerName(name);
+        sessionStorage.setItem("tuncauto-chat-name", name);
+      }
     }
   }
 
@@ -48,35 +77,66 @@ export function LiveChatWidget() {
 
   async function startChat(e: React.FormEvent) {
     e.preventDefault();
-    if (!nameInput.trim()) return;
+    setError(null);
+    const name = nameInput.trim();
+    if (name.length < 2) {
+      setError("Bitte geben Sie einen Namen mit mindestens 2 Zeichen ein.");
+      return;
+    }
     setLoading(true);
-    const res = await fetch("/api/live-chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customerName: nameInput.trim() }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      const json = await res.json();
-      const id = json.data.id;
-      setConversationId(id);
-      setCustomerName(nameInput.trim());
-      sessionStorage.setItem("tuncauto-chat-id", id);
-      sessionStorage.setItem("tuncauto-chat-name", nameInput.trim());
+    try {
+      const res = await fetch("/api/live-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerName: name }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const id = json.data.id;
+        setConversationId(id);
+        setCustomerName(name);
+        sessionStorage.setItem("tuncauto-chat-id", id);
+        sessionStorage.setItem("tuncauto-chat-name", name);
+      } else {
+        setError(await readApiError(res, "Chat konnte nicht gestartet werden."));
+      }
+    } catch {
+      setError("Verbindungsfehler. Bitte versuchen Sie es erneut.");
+    } finally {
+      setLoading(false);
     }
   }
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (!content.trim() || !conversationId) return;
-    const res = await fetch(`/api/live-chat/${conversationId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, senderName: customerName }),
-    });
-    if (res.ok) {
-      setContent("");
-      fetchMessages(conversationId);
+    setError(null);
+    const text = content.trim();
+    if (!text || !conversationId) return;
+
+    setSending(true);
+    try {
+      const payload: { content: string; senderName?: string } = { content: text };
+      const name = customerName.trim();
+      if (name) payload.senderName = name;
+
+      const res = await fetch(`/api/live-chat/${conversationId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setContent("");
+        await fetchMessages(conversationId);
+      } else if (res.status === 404) {
+        clearChatSession();
+        setError("Chat nicht mehr verfügbar. Bitte starten Sie einen neuen Chat.");
+      } else {
+        setError(await readApiError(res, "Nachricht konnte nicht gesendet werden."));
+      }
+    } catch {
+      setError("Verbindungsfehler. Bitte versuchen Sie es erneut.");
+    } finally {
+      setSending(false);
     }
   }
 
@@ -115,6 +175,15 @@ export function LiveChatWidget() {
             </button>
           </div>
 
+          {error && (
+            <div
+              role="alert"
+              className="border-b border-red-900/50 bg-red-950/80 px-4 py-2 text-sm text-red-200"
+            >
+              {error}
+            </div>
+          )}
+
           {!conversationId ? (
             <form onSubmit={startChat} className="flex flex-1 flex-col justify-center p-6">
               <p className="text-sm text-zinc-400">
@@ -125,6 +194,7 @@ export function LiveChatWidget() {
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="Ihr Name"
                 required
+                minLength={2}
                 className="mt-4 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-base text-white focus:border-metallic focus:outline-none"
               />
               <button
@@ -161,13 +231,15 @@ export function LiveChatWidget() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Nachricht..."
-                  className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-base text-white focus:border-metallic focus:outline-none"
+                  disabled={sending}
+                  className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-base text-white focus:border-metallic focus:outline-none disabled:opacity-50"
                 />
                 <button
                   type="submit"
-                  className="btn-metallic rounded-xl bg-metallic px-4 py-2 text-sm font-semibold text-black"
+                  disabled={sending || !content.trim()}
+                  className="btn-metallic rounded-xl bg-metallic px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
                 >
-                  →
+                  {sending ? "…" : "→"}
                 </button>
               </form>
             </>
