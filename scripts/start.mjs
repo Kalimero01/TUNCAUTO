@@ -1,12 +1,20 @@
 import { execSync } from "node:child_process";
 
 const port = process.env.PORT ?? "3000";
+const isProduction = process.env.NODE_ENV === "production";
+const pushArgs = ["--skip-generate"];
+if (isProduction) {
+  pushArgs.push("--accept-data-loss");
+}
 
 console.log("[start] Running database migrations...");
 try {
-  execSync("npx prisma db push --skip-generate", { stdio: "inherit", timeout: 120_000 });
+  execSync(`npx prisma db push ${pushArgs.join(" ")}`, { stdio: "inherit", timeout: 120_000 });
 } catch (error) {
-  console.error("[start] Database migration failed — continuing startup.", error?.message);
+  console.error("[start] Database migration failed.", error?.message);
+  if (isProduction) {
+    process.exit(1);
+  }
 }
 
 console.log("[start] Seeding default admin if needed...");
