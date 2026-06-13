@@ -226,9 +226,14 @@ model FileUpload {
 model Company {
   id            String   @id @default("company")
   name          String
+  owner         String   @default("")
+  street        String   @default("")
+  postalCode    String   @default("")
+  city          String   @default("")
   address       String
   phone         String
   email         String
+  taxId         String   @default("")
   mapEmbedUrl   String?
   logoFile      String?
   impressum     String   @db.Text
