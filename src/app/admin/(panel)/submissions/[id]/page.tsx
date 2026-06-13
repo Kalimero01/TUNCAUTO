@@ -42,7 +42,8 @@ export default function SubmissionDetailPage() {
   }
 
   useEffect(() => {
-    load();
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function handleAction(action: "approve" | "reject") {

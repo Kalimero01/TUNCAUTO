@@ -32,9 +32,10 @@ export default function SellerChatPage() {
   }
 
   useEffect(() => {
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 5000);
+    void fetchMessages();
+    const interval = setInterval(() => void fetchMessages(), 5000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
