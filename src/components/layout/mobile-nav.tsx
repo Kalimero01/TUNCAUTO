@@ -26,13 +26,13 @@ export function MobileNav() {
 
       {open && (
         <div className="absolute left-0 right-0 top-full border-b border-zinc-800 bg-black/95 px-4 py-4 backdrop-blur-xl">
-          <nav className="flex flex-col gap-3">
+          <nav className="flex flex-col items-center gap-3">
             {publicNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="nav-link py-2 text-sm text-zinc-300"
+                className="nav-link py-2 text-base text-zinc-300"
               >
                 {item.label}
               </Link>
