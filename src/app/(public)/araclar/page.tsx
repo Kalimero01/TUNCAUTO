@@ -2,7 +2,9 @@ import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { VehicleListRow } from "@/components/vehicles/vehicle-list-row";
 import { VehicleFilters } from "@/components/vehicles/vehicle-filters";
+import { PageHeroBackground } from "@/components/layout/page-hero-background";
 import { serializeVehicle } from "@/lib/api-helpers";
+import { MERCEDES_G_CLASS_BG } from "@/lib/page-backgrounds";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import type { Prisma } from "@prisma/client";
@@ -36,38 +38,39 @@ export default async function VehiclesPage({ searchParams }: Props) {
   });
 
   return (
-    <>
+    <div>
       <JsonLd
         data={buildBreadcrumbJsonLd([
           { name: "Startseite", path: "/" },
           { name: "Fahrzeuge", path: "/araclar" },
         ])}
       />
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-      <div className="mb-10 text-center">
-        <p className="text-xs uppercase tracking-[0.35em] text-metallic">Fahrzeuge</p>
-        <h1 className="mt-3 text-3xl font-light text-white">Fahrzeuge</h1>
-        <p className="mt-3 text-zinc-500">
-          Premium Gebrauchtwagen in Ahlen — für Hamm, Beckum und ganz Deutschland
-        </p>
-      </div>
 
-      <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Wird geladen...</p>}>
-        <VehicleFilters total={vehicles.length} />
-      </Suspense>
+      <PageHeroBackground
+        imageSrc={MERCEDES_G_CLASS_BG}
+        kicker="Fahrzeuge"
+        title="Fahrzeuge"
+        subtitle="Premium Gebrauchtwagen in Ahlen — für Hamm, Beckum und ganz Deutschland"
+        compact
+      />
 
-      {vehicles.length === 0 ? (
-        <div className="rounded-sm border border-dashed border-zinc-700 p-16 text-center text-zinc-500">
-          Keine Fahrzeuge gefunden.
-        </div>
-      ) : (
-        <div className="divide-y divide-zinc-800/80">
-          {vehicles.map((v) => (
-            <VehicleListRow key={v.id} vehicle={serializeVehicle(v) as never} />
-          ))}
-        </div>
-      )}
+      <section className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+        <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Wird geladen...</p>}>
+          <VehicleFilters total={vehicles.length} />
+        </Suspense>
+
+        {vehicles.length === 0 ? (
+          <div className="rounded-sm border border-dashed border-zinc-700 p-16 text-center text-zinc-500">
+            Keine Fahrzeuge gefunden.
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-800/80">
+            {vehicles.map((v) => (
+              <VehicleListRow key={v.id} vehicle={serializeVehicle(v) as never} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
-    </>
   );
 }

@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ProminentFileUpload } from "@/components/admin/prominent-file-upload";
+import { PageHeroBackground } from "@/components/layout/page-hero-background";
 import { IMAGE_FORMAT_LABEL } from "@/lib/upload-constants";
 import { submissionLabels } from "@/lib/i18n/de";
+import { MERCEDES_G_CLASS_BG } from "@/lib/page-backgrounds";
 import { CAR_BRANDS } from "@/lib/vehicle-constants";
 
 function YesNoField({
@@ -96,28 +98,41 @@ export default function SellPage() {
 
   if (status === "success") {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
-        <div className="rounded-sm border border-emerald-800/50 bg-emerald-950/20 p-10">
-          <h1 className="text-2xl font-light text-emerald-400">Anfrage erhalten!</h1>
-          <p className="mt-4 text-zinc-400">Wir melden uns in Kürze bei Ihnen.</p>
-          <Link
-            href="/"
-            className="btn-outline mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
-          >
-            Zur Startseite
-          </Link>
-        </div>
+      <div>
+        <PageHeroBackground
+          imageSrc={MERCEDES_G_CLASS_BG}
+          kicker="Fahrzeug verkaufen"
+          title="Fahrzeug verkaufen"
+        />
+
+        <section className="relative mx-auto max-w-2xl px-4 py-14 text-center sm:px-6 sm:py-20">
+          <div className="rounded-sm border border-emerald-800/50 bg-emerald-950/20 p-10 backdrop-blur-sm">
+            <h2 className="text-2xl font-light text-emerald-400">Anfrage erhalten!</h2>
+            <p className="mt-4 text-zinc-400">Wir melden uns in Kürze bei Ihnen.</p>
+            <Link
+              href="/"
+              className="btn-outline mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
+            >
+              Zur Startseite
+            </Link>
+          </div>
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <p className="text-xs uppercase tracking-[0.35em] text-metallic">Fahrzeug verkaufen</p>
-      <h1 className="mt-3 text-3xl font-light text-white">Fahrzeug verkaufen</h1>
-      <p className="mt-3 text-zinc-500">Füllen Sie das Formular aus — wir bewerten Ihr Fahrzeug schnell und fair.</p>
+    <div>
+      <PageHeroBackground
+        imageSrc={MERCEDES_G_CLASS_BG}
+        kicker="Fahrzeug verkaufen"
+        title="Fahrzeug verkaufen"
+        subtitle="Füllen Sie das Formular aus — wir bewerten Ihr Fahrzeug schnell und fair."
+      />
 
-      <form onSubmit={handleSubmit} className="mt-12 space-y-8">
+      <section className="relative mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20">
+        <div className="rounded-sm border border-zinc-800/80 bg-zinc-950/60 p-6 backdrop-blur-sm sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
           <legend className="px-2 text-sm font-medium text-zinc-400">{submissionLabels.contact}</legend>
           <Input name="sellerName" label={submissionLabels.name} required />
@@ -217,7 +232,9 @@ export default function SellPage() {
         >
           {status === "loading" ? "Wird gesendet..." : "Anfrage absenden"}
         </button>
-      </form>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }
