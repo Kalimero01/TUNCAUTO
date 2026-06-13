@@ -1,4 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import { SOCIAL_PLATFORMS, isSocialUrlActive, type SocialPlatform } from "@/lib/social";
+
+export type SocialLinkDisplay = {
+  platform: SocialPlatform;
+  url: string;
+  hasUrl: boolean;
+};
 
 export async function getCompany() {
   try {
@@ -46,15 +53,28 @@ export async function getHomeTexts() {
   }
 }
 
-export async function getSocialLinks() {
+export async function getSocialLinks(): Promise<SocialLinkDisplay[]> {
   try {
     const links = await prisma.socialLink.findMany({
-      where: { isActive: true },
       orderBy: { platform: "asc" },
     });
-    return links.filter((link) => link.url.trim() !== "");
+    const byPlatform = new Map(links.map((link) => [link.platform, link]));
+
+    return SOCIAL_PLATFORMS.map((platform) => {
+      const link = byPlatform.get(platform);
+      const url = link?.url.trim() ?? "";
+      return {
+        platform,
+        url,
+        hasUrl: isSocialUrlActive(url, link?.isActive ?? false),
+      };
+    });
   } catch {
-    return [];
+    return SOCIAL_PLATFORMS.map((platform) => ({
+      platform,
+      url: "",
+      hasUrl: false,
+    }));
   }
 }
 

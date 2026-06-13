@@ -143,7 +143,7 @@ export default function AdminSocialPage() {
         ))}
 
         <p className="text-xs text-zinc-500">
-          Leere Links werden auf der Website nicht angezeigt.
+          Leere Links werden im Footer ausgegraut angezeigt und sind noch nicht klickbar.
         </p>
 
         <button

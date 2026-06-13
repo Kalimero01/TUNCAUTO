@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { SocialPlatformIcon } from "@/components/icons/social-icons";
 import { getCompany, getSocialLinks } from "@/lib/cms";
-import { SOCIAL_PLATFORM_LABELS } from "@/lib/social";
+import {
+  SOCIAL_LINK_PENDING_TITLE,
+  SOCIAL_PLATFORM_ARIA_LABELS,
+  SOCIAL_PLATFORM_LABELS,
+} from "@/lib/social";
 import { publicNav } from "@/lib/i18n/de";
 import { SEO_CONFIG } from "@/lib/seo";
 
@@ -30,24 +34,40 @@ export async function SiteFooter() {
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Social Media</p>
-            {social.length > 0 ? (
-              <div className="mt-4 flex gap-4">
-                {social.map((s) => (
-                  <a
-                    key={s.id}
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={SOCIAL_PLATFORM_LABELS[s.platform as keyof typeof SOCIAL_PLATFORM_LABELS] ?? s.platform}
-                    className="social-icon-hover text-zinc-400 opacity-80"
+            <div className="mt-4 flex gap-4">
+              {social.map((s) => {
+                const label = SOCIAL_PLATFORM_LABELS[s.platform];
+                const ariaLabel = SOCIAL_PLATFORM_ARIA_LABELS[s.platform];
+
+                if (s.hasUrl) {
+                  return (
+                    <a
+                      key={s.platform}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={ariaLabel}
+                      title={label}
+                      className="social-icon-hover text-zinc-400 opacity-80 hover:text-metallic"
+                    >
+                      <SocialPlatformIcon platform={s.platform} className="h-5 w-5" />
+                    </a>
+                  );
+                }
+
+                return (
+                  <span
+                    key={s.platform}
+                    role="img"
+                    aria-label={`${label} — ${SOCIAL_LINK_PENDING_TITLE}`}
+                    title={SOCIAL_LINK_PENDING_TITLE}
+                    className="cursor-default text-zinc-600 opacity-50"
                   >
                     <SocialPlatformIcon platform={s.platform} className="h-5 w-5" />
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-4 text-sm text-zinc-600">—</p>
-            )}
+                  </span>
+                );
+              })}
+            </div>
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Kontakt</p>
