@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { prisma } from "@/lib/prisma";
 import { VehicleListRow } from "@/components/vehicles/vehicle-list-row";
 import { VehicleFilters } from "@/components/vehicles/vehicle-filters";
 import { PageHeroBackground } from "@/components/layout/page-hero-background";
@@ -7,6 +6,7 @@ import { serializeVehicle } from "@/lib/api-helpers";
 import { MERCEDES_G_CLASS_BG } from "@/lib/page-backgrounds";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { getAvailableVehicles } from "@/lib/vehicle-queries";
 import type { Prisma } from "@prisma/client";
 
 export const metadata = pageMetadata.vehicles;
@@ -20,22 +20,18 @@ type Props = {
 export default async function VehiclesPage({ searchParams }: Props) {
   const { q, fuel, transmission } = await searchParams;
 
-  const where: Prisma.VehicleWhereInput = { status: "AVAILABLE" };
+  const filters: Prisma.VehicleWhereInput = {};
 
   if (q?.trim()) {
-    where.OR = [
+    filters.OR = [
       { make: { contains: q.trim(), mode: "insensitive" } },
       { model: { contains: q.trim(), mode: "insensitive" } },
     ];
   }
-  if (fuel) where.fuelType = { equals: fuel, mode: "insensitive" };
-  if (transmission) where.transmission = { equals: transmission, mode: "insensitive" };
+  if (fuel) filters.fuelType = { equals: fuel, mode: "insensitive" };
+  if (transmission) filters.transmission = { equals: transmission, mode: "insensitive" };
 
-  const vehicles = await prisma.vehicle.findMany({
-    where,
-    include: { files: true, equipment: true },
-    orderBy: [{ make: "asc" }, { model: "asc" }],
-  });
+  const vehicles = await getAvailableVehicles(filters);
 
   return (
     <div>

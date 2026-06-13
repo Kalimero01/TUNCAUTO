@@ -3,17 +3,13 @@ import Link from "next/link";
 import { VehicleListRow } from "@/components/vehicles/vehicle-list-row";
 import { serializeVehicle } from "@/lib/api-helpers";
 import { cmsImageUrl } from "@/lib/cms";
+import { getFeaturedVehicles } from "@/lib/vehicle-queries";
 
 export async function FeaturedVehicles() {
-  let vehicles: Awaited<ReturnType<typeof prisma.vehicle.findMany>> = [];
+  let vehicles: Awaited<ReturnType<typeof getFeaturedVehicles>> = [];
 
   try {
-    vehicles = await prisma.vehicle.findMany({
-      where: { status: "AVAILABLE" },
-      include: { files: true, equipment: true },
-      orderBy: { price: "desc" },
-      take: 3,
-    });
+    vehicles = await getFeaturedVehicles();
   } catch {
     return (
       <div className="rounded-sm border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
