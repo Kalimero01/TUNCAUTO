@@ -18,7 +18,7 @@ export async function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm tracking-wide text-zinc-400 transition-colors hover:text-metallic"
+              className="nav-link text-sm tracking-wide text-zinc-400"
             >
               {item.label}
             </Link>

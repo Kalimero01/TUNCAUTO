@@ -23,15 +23,15 @@ export function VehicleListRow({ vehicle }: { vehicle: VehicleListItem }) {
   return (
     <Link
       href={`/araclar/${vehicle.slug}`}
-      className="group flex flex-col gap-6 py-8 transition hover:bg-zinc-900/20 sm:flex-row sm:items-center"
+      className="group hover-lift-card flex flex-col gap-6 rounded-sm py-8 sm:flex-row sm:items-center"
     >
-      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-sm bg-zinc-900 sm:w-72">
+      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-sm bg-zinc-900 shadow-sm transition-shadow duration-300 ease-out group-hover:shadow-lg sm:w-72">
         {image ? (
           <Image
             src={image.url}
             alt={`${vehicle.make} ${vehicle.model}`}
             fill
-            className="object-cover transition duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.02]"
             sizes="288px"
             loading="lazy"
             unoptimized
@@ -43,7 +43,7 @@ export function VehicleListRow({ vehicle }: { vehicle: VehicleListItem }) {
 
       <div className="min-w-0 flex-1">
         <p className="text-xs uppercase tracking-widest text-metallic">{vehicle.make}</p>
-        <h3 className="mt-1 text-xl font-medium text-white group-hover:text-metallic transition-colors">
+        <h3 className="mt-1 text-xl font-medium text-white transition-colors duration-200 ease-out group-hover:text-metallic">
           {vehicle.model}
         </h3>
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">
@@ -57,7 +57,7 @@ export function VehicleListRow({ vehicle }: { vehicle: VehicleListItem }) {
 
       <div className="shrink-0 text-right">
         <p className="text-2xl font-light text-metallic">{formatPrice(vehicle.price)}</p>
-        <p className="mt-2 text-xs tracking-widest text-zinc-600 group-hover:text-zinc-400">
+        <p className="mt-2 text-xs tracking-widest text-zinc-600 transition-colors duration-200 ease-out group-hover:text-zinc-400">
           DETAILS →
         </p>
       </div>

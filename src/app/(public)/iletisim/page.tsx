@@ -29,13 +29,13 @@ export default async function ContactPage() {
           </div>
           <div>
             <h2 className="text-sm font-medium uppercase tracking-widest text-zinc-500">Telefon</h2>
-            <a href={`tel:${company?.phone}`} className="mt-3 block text-metallic hover:text-white">
+            <a href={`tel:${company?.phone}`} className="link-hover mt-3 block text-metallic hover:text-white">
               {company?.phone ?? "—"}
             </a>
           </div>
           <div>
             <h2 className="text-sm font-medium uppercase tracking-widest text-zinc-500">E-Mail</h2>
-            <a href={`mailto:${company?.email}`} className="mt-3 block text-metallic hover:text-white">
+            <a href={`mailto:${company?.email}`} className="link-hover mt-3 block text-metallic hover:text-white">
               {company?.email ?? "—"}
             </a>
           </div>

@@ -89,7 +89,7 @@ export function VehicleFilters({ total }: { total: number }) {
           <button
             type="button"
             onClick={clearAll}
-            className="text-brand-400 hover:text-brand-300"
+            className="link-hover text-brand-400 hover:text-brand-300"
           >
             Filter zurücksetzen
           </button>

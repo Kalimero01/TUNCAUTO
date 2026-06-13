@@ -12,7 +12,7 @@ export function MobileNav() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="rounded-sm border border-zinc-700 px-3 py-2 text-zinc-400"
+        className="rounded-sm border border-zinc-700 px-3 py-2 text-zinc-400 transition-colors duration-200 ease-out hover:border-zinc-600 hover:text-metallic"
         aria-label="Menü"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +32,7 @@ export function MobileNav() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="py-2 text-sm text-zinc-300 hover:text-metallic"
+                className="nav-link py-2 text-sm text-zinc-300"
               >
                 {item.label}
               </Link>

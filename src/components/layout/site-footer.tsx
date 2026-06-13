@@ -21,7 +21,7 @@ export async function SiteFooter() {
             <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Navigation</p>
             <div className="mt-4 flex flex-col gap-2 text-sm">
               {publicNav.map((item) => (
-                <Link key={item.href} href={item.href} className="text-zinc-400 hover:text-metallic">
+                <Link key={item.href} href={item.href} className="link-hover text-zinc-400 hover:text-metallic">
                   {item.label}
                 </Link>
               ))}
@@ -38,7 +38,7 @@ export async function SiteFooter() {
                     target="_blank"
                     rel="noopener noreferrer"
                     title={SOCIAL_PLATFORM_LABELS[s.platform as keyof typeof SOCIAL_PLATFORM_LABELS] ?? s.platform}
-                    className="text-zinc-400 transition-colors hover:text-metallic"
+                    className="social-icon-hover text-zinc-400 opacity-80"
                   >
                     <SocialPlatformIcon platform={s.platform} className="h-5 w-5" />
                   </a>
@@ -53,7 +53,7 @@ export async function SiteFooter() {
             <div className="mt-4 space-y-2 text-sm text-zinc-400">
               <p>{company?.address ?? "—"}</p>
               <p>{company?.phone ?? "—"}</p>
-              <a href={`mailto:${company?.email}`} className="block hover:text-metallic">
+              <a href={`mailto:${company?.email}`} className="link-hover block hover:text-metallic">
                 {company?.email ?? "—"}
               </a>
             </div>
@@ -64,8 +64,8 @@ export async function SiteFooter() {
             © {new Date().getFullYear()} TUNC AUTO. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6 text-xs text-zinc-600">
-            <Link href="/impressum" className="hover:text-zinc-400">Impressum</Link>
-            <Link href="/datenschutz" className="hover:text-zinc-400">Datenschutz</Link>
+            <Link href="/impressum" className="link-hover hover:text-zinc-400">Impressum</Link>
+            <Link href="/datenschutz" className="link-hover hover:text-zinc-400">Datenschutz</Link>
           </div>
         </div>
       </div>

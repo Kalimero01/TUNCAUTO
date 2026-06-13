@@ -82,7 +82,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
                     key={img.id}
                     type="button"
                     onClick={() => setActiveImage(i)}
-                    className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-sm bg-zinc-900 ring-2 transition ${
+                    className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-sm bg-zinc-900 ring-2 transition duration-200 ease-out ${
                       i === activeImage ? "ring-red-600" : "ring-zinc-800 hover:ring-zinc-600"
                     }`}
                   >
@@ -121,7 +121,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-sm bg-[#25D366] py-3 text-sm font-semibold text-white transition hover:bg-[#1fb855]"
+                    className="flex items-center justify-center gap-2 rounded-sm bg-[#25D366] py-3 text-sm font-semibold text-white transition duration-200 ease-out motion-safe:hover:scale-[1.02] hover:bg-[#1fb855]"
                   >
                     <WhatsAppIcon />
                     WhatsApp
@@ -130,7 +130,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
                 {companyPhone && (
                   <a
                     href={`tel:${companyPhone}`}
-                    className="flex items-center justify-center gap-2 rounded-sm border border-zinc-700 py-3 text-sm font-semibold text-white transition hover:border-zinc-500"
+                    className="btn-outline flex items-center justify-center gap-2 rounded-sm border border-zinc-700 py-3 text-sm font-semibold text-white"
                   >
                     <PhoneIcon />
                     {companyPhone}
@@ -143,7 +143,7 @@ export function VehicleDetailClient({ vehicle, companyPhone }: VehicleDetailClie
                   href={vehicle.financingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 flex w-full items-center justify-center rounded-sm border border-red-700 bg-red-950/40 py-3 text-sm font-semibold text-red-400 transition hover:bg-red-950/70"
+                  className="btn-outline mt-4 flex w-full items-center justify-center rounded-sm border border-red-700 bg-red-950/40 py-3 text-sm font-semibold text-red-400 hover:bg-red-950/70"
                 >
                   Finanzierung anpassen
                 </a>

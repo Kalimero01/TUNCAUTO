@@ -48,7 +48,7 @@ export default async function ImpressumPage() {
             <div>
               <dt className="text-sm text-zinc-500">Telefon</dt>
               <dd>
-                <a href={`tel:${fields.phone.replace(/\s/g, "")}`} className="hover:text-white">
+                <a href={`tel:${fields.phone.replace(/\s/g, "")}`} className="link-hover hover:text-white">
                   {fields.phone}
                 </a>
               </dd>
@@ -56,7 +56,7 @@ export default async function ImpressumPage() {
             <div>
               <dt className="text-sm text-zinc-500">E-Mail</dt>
               <dd>
-                <a href={`mailto:${fields.email}`} className="hover:text-white">
+                <a href={`mailto:${fields.email}`} className="link-hover hover:text-white">
                   {fields.email}
                 </a>
               </dd>

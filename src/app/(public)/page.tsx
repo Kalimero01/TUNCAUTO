@@ -16,7 +16,7 @@ export default function HomePage() {
         <div className="mt-10 text-center">
           <Link
             href="/araclar"
-            className="text-sm tracking-widest text-metallic hover:text-white transition"
+            className="link-hover text-sm tracking-widest text-metallic hover:text-white"
           >
             Alle anzeigen →
           </Link>

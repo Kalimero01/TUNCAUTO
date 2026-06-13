@@ -35,7 +35,7 @@ export function SiteLogoLink({
   className?: string;
 }) {
   return (
-    <Link href={href} className="group inline-flex shrink-0 items-center">
+    <Link href={href} className="group inline-flex shrink-0 items-center transition-opacity duration-200 ease-out hover:opacity-90">
       <SiteLogo logoUrl={logoUrl} alt={alt} className={className} priority />
     </Link>
   );

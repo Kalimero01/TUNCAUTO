@@ -11,13 +11,13 @@ export default function NotFound() {
       <div className="mt-8 flex flex-wrap justify-center gap-4">
         <Link
           href="/"
-          className="rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-400"
+          className="btn-metallic rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-400"
         >
           Startseite
         </Link>
         <Link
           href="/araclar"
-          className="rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-300 hover:border-zinc-500 hover:text-white"
+          className="btn-outline rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-300 hover:text-white"
         >
           Fahrzeuge ansehen
         </Link>

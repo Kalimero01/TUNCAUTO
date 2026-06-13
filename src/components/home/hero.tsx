@@ -97,13 +97,13 @@ export async function HeroSection() {
           <div className="mt-12 flex flex-wrap justify-center gap-4">
             <Link
               href="/araclar"
-              className="hover-lift rounded-sm border border-metallic bg-metallic/90 px-8 py-3.5 text-sm font-semibold tracking-wide text-black"
+              className="btn-metallic rounded-sm border border-metallic bg-metallic/90 px-8 py-3.5 text-sm font-semibold tracking-wide text-black"
             >
               Fahrzeuge entdecken
             </Link>
             <Link
               href="/sat"
-              className="hover-lift rounded-sm border border-zinc-600 px-8 py-3.5 text-sm font-semibold tracking-wide text-zinc-200 hover:border-metallic hover:text-white"
+              className="btn-outline rounded-sm border border-zinc-600 px-8 py-3.5 text-sm font-semibold tracking-wide text-zinc-200 hover:text-white"
             >
               Fahrzeug verkaufen
             </Link>
