@@ -5,12 +5,10 @@ import {
   jsonError,
   requireAdmin,
   serializeSubmission,
-  serializeVehicle,
 } from "@/lib/api-helpers";
-import { rejectSubmissionSchema, submissionSchema } from "@/lib/validations";
+import { submissionSchema } from "@/lib/validations";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { saveUpload } from "@/lib/uploads";
-import { vehicleSlug } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   const admin = request.nextUrl.searchParams.get("admin") === "true";

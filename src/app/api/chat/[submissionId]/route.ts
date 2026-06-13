@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { jsonData, jsonError, requireAdmin } from "@/lib/api-helpers";
+import { jsonData, jsonError } from "@/lib/api-helpers";
 import { chatMessageSchema } from "@/lib/validations";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import sanitizeHtml from "sanitize-html";
