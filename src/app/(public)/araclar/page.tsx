@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
-import { VehicleCard } from "@/components/vehicles/vehicle-card";
+import { VehicleListRow } from "@/components/vehicles/vehicle-list-row";
 import { VehicleFilters } from "@/components/vehicles/vehicle-filters";
 import { serializeVehicle } from "@/lib/api-helpers";
 import type { Prisma } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: "Araçlar",
-  description: "TUNCAUTO araç ilanları — kaliteli ikinci el ve sıfır araçlar.",
+  title: "Vehicles",
+  description: "TUNC AUTO Fahrzeuge — Premium Automobile alphabetisch sortiert.",
 };
 
 export const dynamic = "force-dynamic";
@@ -33,31 +33,30 @@ export default async function VehiclesPage({ searchParams }: Props) {
 
   const vehicles = await prisma.vehicle.findMany({
     where,
-    include: { files: true },
-    orderBy: { createdAt: "desc" },
+    include: { files: true, equipment: true },
+    orderBy: [{ make: "asc" }, { model: "asc" }],
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white">Araç İlanları</h1>
-        <p className="mt-2 text-zinc-500">Kaliteli araçlarımızı keşfedin</p>
+    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div className="mb-10 text-center">
+        <p className="text-xs uppercase tracking-[0.35em] text-metallic">Vehicles</p>
+        <h1 className="mt-3 text-3xl font-light text-white">Fahrzeuge</h1>
+        <p className="mt-3 text-zinc-500">Alphabetisch nach Marke sortiert</p>
       </div>
 
-      <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Filtreler yükleniyor...</p>}>
+      <Suspense fallback={<p className="mb-8 text-sm text-zinc-500">Laden...</p>}>
         <VehicleFilters total={vehicles.length} />
       </Suspense>
 
       {vehicles.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-700 p-16 text-center text-zinc-500">
-          {q || fuel || transmission
-            ? "Filtrelere uygun araç bulunamadı."
-            : "Şu anda listelenen araç bulunmuyor."}
+        <div className="rounded-sm border border-dashed border-zinc-700 p-16 text-center text-zinc-500">
+          Keine Fahrzeuge gefunden.
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="divide-y divide-zinc-800/80">
           {vehicles.map((v) => (
-            <VehicleCard key={v.id} vehicle={serializeVehicle(v) as never} />
+            <VehicleListRow key={v.id} vehicle={serializeVehicle(v) as never} />
           ))}
         </div>
       )}

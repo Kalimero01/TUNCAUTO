@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { VehicleCard } from "@/components/vehicles/vehicle-card";
+import { VehicleListRow } from "@/components/vehicles/vehicle-list-row";
 import { serializeVehicle } from "@/lib/api-helpers";
+import { cmsImageUrl } from "@/lib/cms";
 
 export async function FeaturedVehicles() {
   let vehicles: Awaited<ReturnType<typeof prisma.vehicle.findMany>> = [];
@@ -9,89 +10,129 @@ export async function FeaturedVehicles() {
   try {
     vehicles = await prisma.vehicle.findMany({
       where: { status: "AVAILABLE" },
-      include: { files: true },
-      orderBy: { createdAt: "desc" },
-      take: 6,
+      include: { files: true, equipment: true },
+      orderBy: [{ make: "asc" }, { model: "asc" }],
+      take: 5,
     });
   } catch {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
-        Araçlar yüklenemedi. Lütfen daha sonra tekrar deneyin.
+      <div className="rounded-sm border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
+        Fahrzeuge konnten nicht geladen werden.
       </div>
     );
   }
 
   if (vehicles.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
-        Henüz listelenen araç bulunmuyor. Yakında yeni araçlar eklenecek.
+      <div className="rounded-sm border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
+        Derzeit keine Fahrzeuge verfügbar.
       </div>
     );
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="divide-y divide-zinc-800/80">
       {vehicles.map((v) => (
-        <VehicleCard key={v.id} vehicle={serializeVehicle(v) as never} />
+        <VehicleListRow key={v.id} vehicle={serializeVehicle(v) as never} />
       ))}
     </div>
   );
 }
 
-export function HeroSection() {
-  return (
-    <section className="relative overflow-hidden border-b border-zinc-800">
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-500/10 via-zinc-950 to-zinc-950" />
-      <div className="absolute inset-0 bg-grid-pattern opacity-30" />
-      <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-brand-500/10 blur-3xl" />
-      <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-brand-600/5 blur-3xl" />
+export async function HeroSection() {
+  const [media, texts] = await Promise.all([
+    prisma.homeMedia.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 1 }),
+    prisma.homeText.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 1 }),
+  ]);
 
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-        <div className="max-w-2xl animate-fade-in">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-4 py-1.5 text-sm font-medium text-brand-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
-            Premium Araç Galerisi
+  const hero = media[0];
+  const heroText = texts[0];
+  const mediaUrl = hero ? cmsImageUrl(hero.filename) : null;
+
+  return (
+    <section className="relative min-h-[85vh] overflow-hidden">
+      {hero?.type === "VIDEO" && mediaUrl ? (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+          poster={mediaUrl}
+        >
+          <source src={mediaUrl} type={hero.mimeType} />
+        </video>
+      ) : mediaUrl ? (
+        <div
+          className="absolute inset-0 bg-cover bg-center parallax-bg"
+          style={{ backgroundImage: `url(${mediaUrl})` }}
+        />
+      ) : (
+        <div className="absolute inset-0 premium-gradient" />
+      )}
+
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+
+      <div className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6">
+        <div className="max-w-3xl animate-fade-in">
+          <p className="mb-6 text-xs font-medium uppercase tracking-[0.35em] text-metallic">
+            Premium Automobile
           </p>
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Hayalinizdeki araca
-            <span className="bg-gradient-to-r from-brand-300 to-brand-500 bg-clip-text text-transparent">
-              {" "}
-              güvenle{" "}
-            </span>
-            ulaşın
+          <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl lg:text-6xl">
+            {hero?.title ?? heroText?.title ?? (
+              <>
+                <span className="text-gradient-silver">TUNC AUTO</span>
+                <br />
+                <span className="text-2xl font-normal text-zinc-300 sm:text-3xl">
+                  Exklusive Fahrzeuge. Vertrauen. Eleganz.
+                </span>
+              </>
+            )}
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-zinc-400">
-            TUNCAUTO ile seçkin araç koleksiyonumuzu keşfedin veya aracınızı profesyonel
-            ekibimize satışa sunun.
+          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-zinc-400">
+            {hero?.subtitle ?? heroText?.content ??
+              "Entdecken Sie unsere kuratierte Auswahl an Premium-Fahrzeugen oder verkaufen Sie Ihr Auto professionell."}
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
             <Link
               href="/araclar"
-              className="rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400"
+              className="hover-lift rounded-sm border border-metallic bg-metallic/90 px-8 py-3.5 text-sm font-semibold tracking-wide text-black"
             >
-              Araçları İncele
+              Fahrzeuge entdecken
             </Link>
             <Link
               href="/sat"
-              className="rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+              className="hover-lift rounded-sm border border-zinc-600 px-8 py-3.5 text-sm font-semibold tracking-wide text-zinc-200 hover:border-metallic hover:text-white"
             >
-              Aracını Sat
+              Fahrzeug verkaufen
             </Link>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-16 grid gap-6 border-t border-zinc-800/50 pt-10 sm:grid-cols-3">
-          {[
-            { value: "100%", label: "Şeffaf süreç" },
-            { value: "7/24", label: "Online başvuru" },
-            { value: "Uzman", label: "Ekip desteği" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center sm:text-left">
-              <p className="text-2xl font-bold text-brand-400">{stat.value}</p>
-              <p className="mt-1 text-sm text-zinc-500">{stat.label}</p>
-            </div>
-          ))}
-        </div>
+export async function HomeTextBlocks() {
+  const texts = await prisma.homeText.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  if (texts.length === 0) return null;
+
+  return (
+    <section className="border-t border-zinc-800/80 bg-zinc-950/50">
+      <div className="mx-auto max-w-5xl space-y-16 px-4 py-20 text-center sm:px-6">
+        {texts.map((block, i) => (
+          <div key={block.id} className="animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+            <h2 className="text-2xl font-light tracking-wide text-white">{block.title}</h2>
+            <p className="mx-auto mt-4 max-w-2xl whitespace-pre-wrap text-zinc-400 leading-relaxed">
+              {block.content}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );

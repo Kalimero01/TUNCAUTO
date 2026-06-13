@@ -7,6 +7,7 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isApiAdminRoute =
     pathname.startsWith("/api/admin") ||
+    pathname.startsWith("/api/live-chat/admin") ||
     (pathname.startsWith("/api/vehicles") &&
       (req.method === "POST" || req.method === "PATCH" || req.method === "DELETE")) ||
     (pathname.startsWith("/api/submissions") && req.method !== "POST") ||
@@ -18,5 +19,12 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/vehicles/:path*", "/api/submissions/:path*", "/api/chat/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/api/live-chat/admin/:path*",
+    "/api/vehicles/:path*",
+    "/api/submissions/:path*",
+    "/api/chat/admin/:path*",
+  ],
 };

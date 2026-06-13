@@ -26,11 +26,17 @@ enum VehicleStatus {
 enum MessageSender {
   ADMIN
   SELLER
+  CUSTOMER
 }
 
 enum FileType {
   IMAGE
   VIDEO
+}
+
+enum SocialPlatform {
+  INSTAGRAM
+  TIKTOK
 }
 
 model User {
@@ -47,67 +53,152 @@ model User {
   @@map("users")
 }
 
-model Vehicle {
-  id           String        @id @default(cuid())
-  make         String
-  model        String
-  year         Int
-  price        Decimal       @db.Decimal(12, 2)
-  mileage      Int?
-  fuelType     String?
-  transmission String?
-  color        String?
-  description  String?
-  features     String[]      @default([])
-  status       VehicleStatus @default(AVAILABLE)
-  slug         String        @unique
-  submissionId String?       @unique
-  submission   SellerSubmission? @relation(fields: [submissionId], references: [id])
-  files        FileUpload[]  @relation("VehicleFiles")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+model HomeMedia {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  type      FileType
+  title     String?
+  subtitle  String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
 
-  @@index([status, createdAt])
+  @@map("home_media")
+}
+
+model HomeText {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("home_text")
+}
+
+model About {
+  id        String   @id @default("about")
+  title     String
+  content   String   @db.Text
+  imageFile String?
+  imageMime String?
+  updatedAt DateTime @updatedAt
+
+  @@map("about")
+}
+
+model VisionMission {
+  id        String   @id @default("vision_mission")
+  title     String
+  content   String   @db.Text
+  imageFile String?
+  imageMime String?
+  updatedAt DateTime @updatedAt
+
+  @@map("vision_mission")
+}
+
+model Vehicle {
+  id             String        @id @default(cuid())
+  make           String
+  model          String
+  year           Int
+  price          Decimal       @db.Decimal(12, 2)
+  mileage        Int?
+  fuelType       String?
+  transmission   String?
+  horsepower     Int?
+  color          String?
+  description    String?       @db.Text
+  financingOffer String?       @db.Text
+  financingUrl   String?
+  features       String[]      @default([])
+  status         VehicleStatus @default(AVAILABLE)
+  slug           String        @unique
+  submissionId   String?       @unique
+  submission     SellerSubmission? @relation(fields: [submissionId], references: [id])
+  files          FileUpload[]  @relation("VehicleFiles")
+  equipment      Equipment[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, make])
   @@map("vehicles")
 }
 
+model Equipment {
+  id        String  @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  name      String
+  sortOrder Int     @default(0)
+
+  @@index([vehicleId, sortOrder])
+  @@map("equipment")
+}
+
 model SellerSubmission {
-  id           String           @id @default(cuid())
-  sellerName   String
-  sellerEmail  String
-  sellerPhone  String?
-  make         String
-  model        String
-  year         Int
-  price        Decimal          @db.Decimal(12, 2)
-  mileage      Int?
-  fuelType     String?
-  transmission String?
-  color        String?
-  description  String?
-  status       SubmissionStatus @default(PENDING)
-  adminNotes   String?
-  vehicle      Vehicle?
-  files        FileUpload[]     @relation("SubmissionFiles")
-  chatMessages ChatMessage[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id               String           @id @default(cuid())
+  sellerName       String
+  sellerEmail      String
+  sellerPhone      String?
+  make             String
+  model            String
+  year             Int
+  price            Decimal          @db.Decimal(12, 2)
+  desiredPrice     Decimal?         @db.Decimal(12, 2)
+  mileage          Int?
+  fuelType         String?
+  transmission     String?
+  color            String?
+  description      String?          @db.Text
+  hasAccident      Boolean?
+  accidentDetails  String?          @db.VarChar(200)
+  hasRepaint       Boolean?
+  repaintDetails   String?          @db.VarChar(200)
+  hasPartsReplaced Boolean?
+  partsDetails     String?          @db.VarChar(200)
+  status           SubmissionStatus @default(PENDING)
+  adminNotes       String?
+  vehicle          Vehicle?
+  files            FileUpload[]     @relation("SubmissionFiles")
+  chatMessages     ChatMessage[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   @@index([status, createdAt])
   @@map("seller_submissions")
 }
 
+model ChatConversation {
+  id           String        @id @default(cuid())
+  customerName String
+  isActive     Boolean       @default(true)
+  messages     ChatMessage[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([isActive, updatedAt])
+  @@map("chat_conversations")
+}
+
 model ChatMessage {
-  id           String           @id @default(cuid())
-  submissionId String
-  submission   SellerSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  senderType   MessageSender
-  senderName   String
-  content      String
-  isRead       Boolean          @default(false)
-  createdAt    DateTime         @default(now())
+  id             String            @id @default(cuid())
+  submissionId   String?
+  submission     SellerSubmission? @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  conversationId String?
+  conversation   ChatConversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderType     MessageSender
+  senderName     String
+  content        String
+  isRead         Boolean           @default(false)
+  createdAt      DateTime          @default(now())
 
   @@index([submissionId, createdAt])
+  @@index([conversationId, createdAt])
   @@map("chat_messages")
 }
 
@@ -118,6 +209,7 @@ model FileUpload {
   mimeType     String
   size         Int
   type         FileType
+  sortOrder    Int               @default(0)
   vehicleId    String?
   vehicle      Vehicle?          @relation("VehicleFiles", fields: [vehicleId], references: [id], onDelete: SetNull)
   submissionId String?
@@ -125,4 +217,27 @@ model FileUpload {
   createdAt    DateTime          @default(now())
 
   @@map("file_uploads")
+}
+
+model Company {
+  id            String   @id @default("company")
+  name          String
+  address       String
+  phone         String
+  email         String
+  mapEmbedUrl   String?
+  impressum     String   @db.Text
+  privacyPolicy String   @db.Text
+  updatedAt     DateTime @updatedAt
+
+  @@map("company")
+}
+
+model SocialLink {
+  id       String         @id @default(cuid())
+  platform SocialPlatform
+  url      String
+  isActive Boolean        @default(true)
+
+  @@map("social_links")
 }

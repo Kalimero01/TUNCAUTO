@@ -3,10 +3,58 @@
 import { useState } from "react";
 import Link from "next/link";
 
+function YesNoField({
+  name,
+  label,
+  detailsName,
+  value,
+  onChange,
+}: {
+  name: string;
+  label: string;
+  detailsName: string;
+  value: "yes" | "no" | "";
+  onChange: (v: "yes" | "no" | "") => void;
+}) {
+  return (
+    <div className="rounded-sm border border-zinc-800 p-4">
+      <p className="text-sm text-zinc-300">{label}</p>
+      <div className="mt-3 flex gap-4">
+        {(["yes", "no"] as const).map((opt) => (
+          <label key={opt} className="flex items-center gap-2 text-sm text-zinc-400">
+            <input
+              type="radio"
+              name={name}
+              value={opt}
+              checked={value === opt}
+              onChange={() => onChange(opt)}
+              required
+            />
+            {opt === "yes" ? "Ja" : "Nein"}
+          </label>
+        ))}
+      </div>
+      {value === "yes" && (
+        <textarea
+          name={detailsName}
+          maxLength={200}
+          required
+          rows={3}
+          placeholder="Bitte beschreiben (max. 200 Zeichen)"
+          className="mt-3 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white focus:border-metallic focus:outline-none"
+        />
+      )}
+    </div>
+  );
+}
+
 export default function SellPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
   const [submissionId, setSubmissionId] = useState("");
+  const [accident, setAccident] = useState<"yes" | "no" | "">("");
+  const [repaint, setRepaint] = useState<"yes" | "no" | "">("");
+  const [parts, setParts] = useState<"yes" | "no" | "">("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,7 +69,7 @@ export default function SellPage() {
       const json = await res.json();
 
       if (!res.ok) {
-        setError(json.error ?? "Başvuru gönderilemedi.");
+        setError(json.error ?? "Anfrage fehlgeschlagen.");
         setStatus("error");
         return;
       }
@@ -29,8 +77,11 @@ export default function SellPage() {
       setSubmissionId(json.data.id);
       setStatus("success");
       form.reset();
+      setAccident("");
+      setRepaint("");
+      setParts("");
     } catch {
-      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
+      setError("Verbindungsfehler. Bitte erneut versuchen.");
       setStatus("error");
     }
   }
@@ -38,17 +89,15 @@ export default function SellPage() {
   if (status === "success") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
-        <div className="rounded-2xl border border-emerald-800/50 bg-emerald-950/30 p-10">
-          <h1 className="text-2xl font-bold text-emerald-400">Başvurunuz Alındı!</h1>
-          <p className="mt-4 text-zinc-400">
-            Aracınız incelendikten sonra sizinle iletişime geçeceğiz.
-          </p>
+        <div className="rounded-sm border border-emerald-800/50 bg-emerald-950/20 p-10">
+          <h1 className="text-2xl font-light text-emerald-400">Anfrage erhalten!</h1>
+          <p className="mt-4 text-zinc-400">Wir melden uns in Kürze bei Ihnen.</p>
           {submissionId && (
             <Link
               href={`/sat/mesaj/${submissionId}`}
-              className="mt-6 inline-block rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-400"
+              className="mt-6 inline-block rounded-sm border border-metallic px-6 py-3 text-sm font-semibold text-metallic hover:bg-metallic/10"
             >
-              Mesajlaşmaya Git
+              Nachrichten →
             </Link>
           )}
         </div>
@@ -57,75 +106,81 @@ export default function SellPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white">Aracını Sat</h1>
-        <p className="mt-2 text-zinc-500">
-          Formu doldurun, ekibimiz en kısa sürede değerlendirsin.
-        </p>
-      </div>
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+      <p className="text-xs uppercase tracking-[0.35em] text-metallic">Sell Your Vehicle</p>
+      <h1 className="mt-3 text-3xl font-light text-white">Fahrzeug verkaufen</h1>
+      <p className="mt-3 text-zinc-500">Füllen Sie das Formular aus — wir bewerten Ihr Fahrzeug schnell und fair.</p>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <fieldset className="space-y-4 rounded-2xl border border-zinc-800 p-6">
-          <legend className="px-2 text-sm font-medium text-zinc-400">İletişim Bilgileri</legend>
-          <Input name="sellerName" label="Ad Soyad" required />
-          <Input name="sellerEmail" label="E-posta" type="email" required />
+      <form onSubmit={handleSubmit} className="mt-12 space-y-8">
+        <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
+          <legend className="px-2 text-sm font-medium text-zinc-400">Kontakt</legend>
+          <Input name="sellerName" label="Name" required />
+          <Input name="sellerEmail" label="E-Mail" type="email" required />
           <Input name="sellerPhone" label="Telefon" type="tel" />
         </fieldset>
 
-        <fieldset className="space-y-4 rounded-2xl border border-zinc-800 p-6">
-          <legend className="px-2 text-sm font-medium text-zinc-400">Araç Bilgileri</legend>
+        <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
+          <legend className="px-2 text-sm font-medium text-zinc-400">Fahrzeugdaten</legend>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input name="make" label="Marka" required />
-            <Input name="model" label="Model" required />
-            <Input name="year" label="Yıl" type="number" min={1900} max={2030} required />
-            <Input name="price" label="Fiyat (₺)" type="number" min={0} required />
-            <Input name="mileage" label="Kilometre" type="number" min={0} />
-            <Input name="fuelType" label="Yakıt Tipi" placeholder="Benzin, Dizel..." />
-            <Input name="transmission" label="Vites" placeholder="Otomatik, Manuel..." />
-            <Input name="color" label="Renk" />
+            <Input name="make" label="Marke" required />
+            <Input name="model" label="Modell" required />
+            <Input name="year" label="Baujahr" type="number" min={1900} max={2030} required />
+            <Input name="price" label="Aktueller Preis (€)" type="number" min={0} required />
+            <Input name="desiredPrice" label="Wunschpreis (€)" type="number" min={0} />
+            <Input name="mileage" label="Kilometerstand" type="number" min={0} />
+            <Input name="fuelType" label="Kraftstoff" />
+            <Input name="transmission" label="Getriebe" />
+            <Input name="color" label="Farbe" />
           </div>
           <div>
-            <label className="block text-sm text-zinc-400">Açıklama</label>
+            <label className="block text-sm text-zinc-400">Beschreibung</label>
             <textarea
               name="description"
               rows={4}
-              className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-brand-500 focus:outline-none"
-              placeholder="Aracınız hakkında detaylar..."
+              className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-metallic focus:outline-none"
             />
           </div>
         </fieldset>
 
-        <fieldset className="space-y-4 rounded-2xl border border-zinc-800 p-6">
-          <legend className="px-2 text-sm font-medium text-zinc-400">Görseller & Videolar</legend>
-          <div>
-            <label className="block text-sm text-zinc-400">
-              Görseller (max 10, JPEG/PNG/WebP, 10MB)
-            </label>
-            <input
-              type="file"
-              name="images"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              multiple
-              className="mt-2 block w-full text-sm text-zinc-400 file:mr-4 file:rounded-full file:border-0 file:bg-brand-500 file:px-4 file:py-2 file:text-sm file:text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-zinc-400">
-              Videolar (max 3, MP4/WebM/MOV, 100MB)
-            </label>
-            <input
-              type="file"
-              name="videos"
-              accept="video/mp4,video/webm,video/quicktime"
-              multiple
-              className="mt-2 block w-full text-sm text-zinc-400 file:mr-4 file:rounded-full file:border-0 file:bg-zinc-700 file:px-4 file:py-2 file:text-sm file:text-white"
-            />
-          </div>
+        <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
+          <legend className="px-2 text-sm font-medium text-zinc-400">Fahrzeughistorie</legend>
+          <YesNoField
+            name="hasAccident"
+            label="Unfallschäden?"
+            detailsName="accidentDetails"
+            value={accident}
+            onChange={setAccident}
+          />
+          <YesNoField
+            name="hasRepaint"
+            label="Neulackierung?"
+            detailsName="repaintDetails"
+            value={repaint}
+            onChange={setRepaint}
+          />
+          <YesNoField
+            name="hasPartsReplaced"
+            label="Ausgetauschte Teile?"
+            detailsName="partsDetails"
+            value={parts}
+            onChange={setParts}
+          />
+        </fieldset>
+
+        <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
+          <legend className="px-2 text-sm font-medium text-zinc-400">Bilder (max. 8)</legend>
+          <input
+            type="file"
+            name="images"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
+            multiple
+            className="block w-full text-sm text-zinc-400 file:mr-4 file:rounded-sm file:border-0 file:bg-metallic file:px-4 file:py-2 file:text-sm file:text-black"
+          />
+          <p className="text-xs text-zinc-600">JPG, JPEG, PNG, WEBP — max. 10 MB pro Bild</p>
         </fieldset>
 
         {error && (
-          <p className="rounded-xl border border-red-800/50 bg-red-950/30 px-4 py-3 text-sm text-red-300">
+          <p className="rounded-sm border border-red-800/50 bg-red-950/30 px-4 py-3 text-sm text-red-300">
             {error}
           </p>
         )}
@@ -133,9 +188,9 @@ export default function SellPage() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full rounded-full bg-brand-500 py-3.5 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:opacity-50"
+          className="w-full rounded-sm border border-metallic bg-metallic/90 py-3.5 text-sm font-semibold tracking-wide text-black disabled:opacity-50"
         >
-          {status === "loading" ? "Gönderiliyor..." : "Başvuruyu Gönder"}
+          {status === "loading" ? "Wird gesendet..." : "Anfrage absenden"}
         </button>
       </form>
     </div>
@@ -151,7 +206,7 @@ function Input({
       <label className="block text-sm text-zinc-400">{label}</label>
       <input
         {...props}
-        className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white placeholder:text-zinc-600 focus:border-brand-500 focus:outline-none"
+        className="mt-1 w-full rounded-sm border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-white focus:border-metallic focus:outline-none"
       />
     </div>
   );

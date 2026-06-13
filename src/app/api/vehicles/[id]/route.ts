@@ -10,7 +10,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
   const { id } = await params;
   const vehicle = await prisma.vehicle.findFirst({
     where: { OR: [{ id }, { slug: id }] },
-    include: { files: true },
+    include: { files: true, equipment: true },
   });
 
   if (!vehicle) return jsonError("Araç bulunamadı.", 404);
@@ -39,10 +39,24 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         )
       : undefined;
 
+  const { equipment: equipList, ...vehicleData } = parsed.data;
+
   const vehicle = await prisma.vehicle.update({
     where: { id },
-    data: { ...parsed.data, ...(slug ? { slug } : {}) },
-    include: { files: true },
+    data: {
+      ...vehicleData,
+      financingUrl: vehicleData.financingUrl || null,
+      ...(slug ? { slug } : {}),
+      ...(equipList
+        ? {
+            equipment: {
+              deleteMany: {},
+              create: equipList.map((name, i) => ({ name, sortOrder: i })),
+            },
+          }
+        : {}),
+    },
+    include: { files: true, equipment: true },
   });
 
   return jsonData(serializeVehicle(vehicle));

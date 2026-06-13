@@ -6,9 +6,9 @@ export const UPLOAD_DIR = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "up
 
 const IMAGE_MIMES = new Set([
   "image/jpeg",
+  "image/jpg",
   "image/png",
   "image/webp",
-  "image/gif",
 ]);
 
 const VIDEO_MIMES = new Set([
@@ -17,14 +17,14 @@ const VIDEO_MIMES = new Set([
   "video/quicktime",
 ]);
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 
 const IMAGE_EXT: Record<string, string> = {
   "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
   "image/png": ".png",
   "image/webp": ".webp",
-  "image/gif": ".gif",
 };
 
 const VIDEO_EXT: Record<string, string> = {
@@ -35,20 +35,26 @@ const VIDEO_EXT: Record<string, string> = {
 
 export type UploadKind = "IMAGE" | "VIDEO";
 
+export function normalizeMime(mime: string): string {
+  if (mime === "image/jpg") return "image/jpeg";
+  return mime;
+}
+
 export function validateUpload(
   file: File,
   kind: UploadKind
 ): { ok: true } | { ok: false; error: string } {
+  const mime = normalizeMime(file.type);
   const allowedMimes = kind === "IMAGE" ? IMAGE_MIMES : VIDEO_MIMES;
   const maxSize = kind === "IMAGE" ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
 
-  if (!allowedMimes.has(file.type)) {
+  if (!allowedMimes.has(mime)) {
     return {
       ok: false,
       error:
         kind === "IMAGE"
-          ? "Geçersiz görsel formatı. JPEG, PNG, WebP veya GIF yükleyin."
-          : "Geçersiz video formatı. MP4, WebM veya MOV yükleyin.",
+          ? "Ungültiges Bildformat. JPG, JPEG, PNG oder WEBP erlaubt."
+          : "Ungültiges Videoformat. MP4 erlaubt.",
     };
   }
 
@@ -57,8 +63,8 @@ export function validateUpload(
       ok: false,
       error:
         kind === "IMAGE"
-          ? "Görsel boyutu en fazla 10 MB olabilir."
-          : "Video boyutu en fazla 100 MB olabilir.",
+          ? "Bild darf maximal 10 MB groß sein."
+          : "Video darf maximal 100 MB groß sein.",
     };
   }
 
@@ -75,8 +81,9 @@ export async function saveUpload(file: File, kind: UploadKind): Promise<{
   const validation = validateUpload(file, kind);
   if (!validation.ok) throw new Error(validation.error);
 
+  const mime = normalizeMime(file.type);
   const extMap = kind === "IMAGE" ? IMAGE_EXT : VIDEO_EXT;
-  const ext = extMap[file.type] ?? (kind === "IMAGE" ? ".bin" : ".bin");
+  const ext = extMap[mime] ?? (kind === "IMAGE" ? ".bin" : ".bin");
   const filename = `${randomUUID()}${ext}`;
   const subdir = kind === "IMAGE" ? "images" : "videos";
   const dir = path.join(UPLOAD_DIR, subdir);
@@ -89,7 +96,7 @@ export async function saveUpload(file: File, kind: UploadKind): Promise<{
   return {
     filename: `${subdir}/${filename}`,
     originalName: file.name.slice(0, 255),
-    mimeType: file.type,
+    mimeType: mime,
     size: file.size,
     type: kind,
   };
