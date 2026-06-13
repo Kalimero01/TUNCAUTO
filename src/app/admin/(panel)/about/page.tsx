@@ -80,7 +80,7 @@ export default function AdminAboutPage() {
       <form onSubmit={handleSubmit} className="mt-8 max-w-2xl space-y-6">
         <ProminentFileUpload
           name="image"
-          label="Titelbild"
+          label="Inhaltsbild (neben Text)"
           buttonLabel="Bild hochladen"
           currentImageUrl={imageUrl}
           disabled={saving}

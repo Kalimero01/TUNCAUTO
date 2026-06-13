@@ -1,5 +1,7 @@
+import { SectionedCmsContent } from "@/components/cms/sectioned-content";
 import { PageHeroBackground } from "@/components/layout/page-hero-background";
 import { getVisionMission } from "@/lib/cms";
+import { VISION_MISSION_DEFAULTS } from "@/lib/cms-defaults";
 import { MERCEDES_G_CLASS_BG } from "@/lib/page-backgrounds";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
@@ -28,9 +30,7 @@ export default async function VisionMissionPage() {
 
       <section className="relative mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20">
         <div className="rounded-sm border border-zinc-800/80 bg-zinc-950/60 p-8 backdrop-blur-sm sm:p-10">
-          <div className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-400">
-            {data?.content ?? "Unsere Vision und Mission werden in Kürze veröffentlicht."}
-          </div>
+          <SectionedCmsContent content={data?.content ?? VISION_MISSION_DEFAULTS.content} />
         </div>
       </section>
     </div>

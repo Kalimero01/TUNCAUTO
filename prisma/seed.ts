@@ -1,5 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  VISION_MISSION_DEFAULTS,
+  isVisionMissionPlaceholder,
+} from "../src/lib/cms-defaults";
 
 const prisma = new PrismaClient();
 
@@ -75,23 +79,30 @@ async function main() {
     create: {
       id: "about",
       title: "Über uns",
-      content: `TUNC AUTO steht für Premium-Fahrzeuge, Transparenz und erstklassigen Service.
+      content: `TUNC AUTO — Premium-Gebrauchtwagen in Ahlen
 
-Als unabhängiger Autohändler bieten wir sorgfältig geprüfte Fahrzeuge in einer exklusiven Atmosphäre. Unser Team begleitet Sie von der ersten Beratung bis zur Übergabe — persönlich, kompetent und zuverlässig.`,
+Bei Tunc Automobile verbinden wir Leidenschaft für Automobile mit ehrlicher Beratung. In Ahlen und der Region — von Hamm und Beckum bis bundesweit — finden Sie sorgfältig ausgewählte Gebrauchtwagen in gehobener Ausstattung.
+
+Serkan Tunc und unser Team begleiten Sie persönlich: von der ersten Anfrage über die Probefahrt bis zur Übergabe. Kein Callcenter — sondern direkter Ansprechpartner, der Zeit für Ihre Fragen hat.
+
+Transparenz ist für uns selbstverständlich. Wir dokumentieren Zustand und Historie jedes Fahrzeugs offen und fair. Ob Kauf oder Verkauf — bei uns erhalten Sie ehrliche Einschätzungen und realistische Preise.
+
+Besuchen Sie uns in Ahlen oder rufen Sie an. Wir freuen uns auf Sie.`,
     },
+  });
+
+  const existingVisionMission = await prisma.visionMission.findUnique({
+    where: { id: "vision_mission" },
   });
 
   await prisma.visionMission.upsert({
     where: { id: "vision_mission" },
-    update: {},
+    update: isVisionMissionPlaceholder(existingVisionMission?.content)
+      ? VISION_MISSION_DEFAULTS
+      : {},
     create: {
       id: "vision_mission",
-      title: "Vision & Mission",
-      content: `**Unsere Vision**
-Die erste Adresse für Premium-Fahrzeuge in Deutschland zu sein — mit Vertrauen, Eleganz und digitaler Exzellenz.
-
-**Unsere Mission**
-Jedes Fahrzeug mit höchster Sorgfalt auszuwählen, faire Preise zu bieten und unseren Kunden ein unvergessliches Kauferlebnis zu ermöglichen.`,
+      ...VISION_MISSION_DEFAULTS,
     },
   });
 

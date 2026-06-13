@@ -1,5 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  VISION_MISSION_DEFAULTS,
+  isVisionMissionPlaceholder,
+} from "./cms-defaults.mjs";
 
 const prisma = new PrismaClient();
 
@@ -51,6 +55,21 @@ async function main() {
     where: { id: "company" },
     update: companyData,
     create: { id: "company", ...companyData },
+  });
+
+  const existingVisionMission = await prisma.visionMission.findUnique({
+    where: { id: "vision_mission" },
+  });
+
+  await prisma.visionMission.upsert({
+    where: { id: "vision_mission" },
+    update: isVisionMissionPlaceholder(existingVisionMission?.content)
+      ? VISION_MISSION_DEFAULTS
+      : {},
+    create: {
+      id: "vision_mission",
+      ...VISION_MISSION_DEFAULTS,
+    },
   });
 }
 
