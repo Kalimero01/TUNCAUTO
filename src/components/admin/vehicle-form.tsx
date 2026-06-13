@@ -57,6 +57,7 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
   const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
     new Set(initial?.equipmentFeatures ?? [])
   );
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const firstReg = splitFirstRegistration(
@@ -88,11 +89,8 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
     }
 
     if (mode === "create") {
-      const newImages = fileInputRef.current?.files;
-      if (newImages) {
-        for (let i = 0; i < newImages.length; i++) {
-          formData.append("images", newImages[i]);
-        }
+      for (const file of pendingFiles) {
+        formData.append("images", file);
       }
       const res = await fetch("/api/vehicles", { method: "POST", body: formData });
       setLoading(false);
@@ -157,6 +155,27 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
     if (res.ok) {
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     }
+  }
+
+  function handleCreateFilesSelected(fileList: FileList | null) {
+    if (!fileList?.length) return;
+    const incoming = Array.from(fileList).filter((f) =>
+      ["image/jpeg", "image/png", "image/webp"].includes(f.type)
+    );
+    setPendingFiles((prev) => {
+      const combined = [...prev, ...incoming];
+      if (combined.length > 10) {
+        setError("Maximal 10 Bilder pro Fahrzeug.");
+        return combined.slice(0, 10);
+      }
+      setError("");
+      return combined;
+    });
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function removePendingFile(index: number) {
+    setPendingFiles((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function moveImage(imageId: string, direction: "up" | "down") {
@@ -319,6 +338,19 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
         <Field name="seats" label="Sitze" type="number" defaultValue={initial?.seats} />
       </section>
 
+      <VehicleImagesSection
+        mode={mode}
+        sortedImages={sortedImages}
+        pendingFiles={pendingFiles}
+        imageLoading={imageLoading}
+        fileInputRef={fileInputRef}
+        onCreateFilesSelected={handleCreateFilesSelected}
+        onRemovePending={removePendingFile}
+        onEditUpload={handleImageUpload}
+        onDelete={handleImageDelete}
+        onMove={moveImage}
+      />
+
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
           Ausstattung ({selectedFeatures.size}/{ALL_EQUIPMENT_FEATURES.length})
@@ -342,71 +374,6 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
         </div>
       </section>
 
-      {mode === "create" ? (
-        <div>
-          <label className="block text-sm text-zinc-400">Bilder (max. 10, JPG/PNG/WEBP)</label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            className="mt-1 text-sm text-zinc-400"
-          />
-        </div>
-      ) : (
-        <div>
-          <label className="block text-sm text-zinc-400">Bilder ({sortedImages.length}/10)</label>
-          {sortedImages.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {sortedImages.map((img, i) => (
-                <div key={img.id} className="relative overflow-hidden rounded-sm border border-zinc-700">
-                  <div className="relative aspect-square bg-zinc-900">
-                    <Image src={img.url} alt="" fill className="object-cover" unoptimized />
-                  </div>
-                  <div className="flex items-center justify-between gap-1 bg-zinc-900 p-1">
-                    <button
-                      type="button"
-                      onClick={() => moveImage(img.id, "up")}
-                      disabled={i === 0 || imageLoading}
-                      className="px-1 text-xs text-zinc-400 hover:text-white disabled:opacity-30"
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleImageDelete(img.id)}
-                      disabled={imageLoading}
-                      className="text-xs text-red-400 hover:text-red-300"
-                    >
-                      Löschen
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveImage(img.id, "down")}
-                      disabled={i === sortedImages.length - 1 || imageLoading}
-                      className="px-1 text-xs text-zinc-400 hover:text-white disabled:opacity-30"
-                    >
-                      ↓
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {sortedImages.length < 10 && (
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={handleImageUpload}
-              disabled={imageLoading}
-              className="mt-3 text-sm text-zinc-400"
-            />
-          )}
-          {imageLoading && <p className="mt-2 text-xs text-zinc-500">Bilder werden verarbeitet...</p>}
-        </div>
-      )}
-
       {error && <p className="text-sm text-red-400">{error}</p>}
 
       <div className="flex gap-3">
@@ -428,6 +395,145 @@ export function VehicleForm({ mode, vehicleId, initial, onSuccess, onCancel }: V
         )}
       </div>
     </form>
+  );
+}
+
+function VehicleImagesSection({
+  mode,
+  sortedImages,
+  pendingFiles,
+  imageLoading,
+  fileInputRef,
+  onCreateFilesSelected,
+  onRemovePending,
+  onEditUpload,
+  onDelete,
+  onMove,
+}: {
+  mode: "create" | "edit";
+  sortedImages: VehicleImage[];
+  pendingFiles: File[];
+  imageLoading: boolean;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  onCreateFilesSelected: (files: FileList | null) => void;
+  onRemovePending: (index: number) => void;
+  onEditUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDelete: (id: string) => void;
+  onMove: (id: string, direction: "up" | "down") => void;
+}) {
+  const totalCount = mode === "create" ? pendingFiles.length : sortedImages.length;
+  const canAddMore = totalCount < 10;
+
+  return (
+    <section className="rounded-sm border border-zinc-700 bg-zinc-900/40 p-5">
+      <h2 className="text-sm font-semibold uppercase tracking-widest text-metallic">
+        Fahrzeugbilder
+      </h2>
+      <p className="mt-1 text-sm text-zinc-500">
+        Maximal 10 Bilder · JPG, PNG oder WEBP · {totalCount}/10 hochgeladen
+      </p>
+
+      {mode === "create" && pendingFiles.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {pendingFiles.map((file, i) => (
+            <div key={`${file.name}-${i}`} className="relative overflow-hidden rounded-sm border border-zinc-700">
+              <div className="relative aspect-square bg-zinc-900">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => onRemovePending(i)}
+                className="w-full bg-zinc-900 py-1.5 text-xs text-red-400 hover:text-red-300"
+              >
+                Entfernen
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {mode === "edit" && sortedImages.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {sortedImages.map((img, i) => (
+            <div key={img.id} className="relative overflow-hidden rounded-sm border border-zinc-700">
+              <div className="relative aspect-square bg-zinc-900">
+                <Image src={img.url} alt="" fill className="object-cover" unoptimized />
+              </div>
+              <div className="flex items-center justify-between gap-1 bg-zinc-900 p-1">
+                <button
+                  type="button"
+                  onClick={() => onMove(img.id, "up")}
+                  disabled={i === 0 || imageLoading}
+                  className="px-1 text-xs text-zinc-400 hover:text-white disabled:opacity-30"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDelete(img.id)}
+                  disabled={imageLoading}
+                  className="text-xs text-red-400 hover:text-red-300"
+                >
+                  Löschen
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onMove(img.id, "down")}
+                  disabled={i === sortedImages.length - 1 || imageLoading}
+                  className="px-1 text-xs text-zinc-400 hover:text-white disabled:opacity-30"
+                >
+                  ↓
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {canAddMore && (
+        <>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="hidden"
+            onChange={(e) =>
+              mode === "create" ? onCreateFilesSelected(e.target.files) : onEditUpload(e)
+            }
+          />
+          <button
+            type="button"
+            disabled={imageLoading}
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-4 flex w-full flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed border-zinc-600 bg-zinc-950/50 px-6 py-10 text-center transition hover:border-metallic hover:bg-zinc-900/80 disabled:opacity-50"
+          >
+            <svg
+              className="h-10 w-10 text-metallic"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+              />
+            </svg>
+            <span className="text-sm font-medium text-white">Bilder hochladen</span>
+            <span className="text-xs text-zinc-500">Klicken oder Dateien hierher ziehen</span>
+          </button>
+        </>
+      )}
+
+      {imageLoading && <p className="mt-2 text-xs text-zinc-500">Bilder werden verarbeitet...</p>}
+    </section>
   );
 }
 
