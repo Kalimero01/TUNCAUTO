@@ -266,3 +266,16 @@ model TestDriveRequest {
   @@index([readAt, createdAt])
   @@map("test_drive_requests")
 }
+
+model ContactMessage {
+  id           String    @id @default(cuid())
+  customerName String
+  email        String
+  phone        String
+  message      String    @db.Text
+  readAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([readAt, createdAt])
+  @@map("contact_messages")
+}

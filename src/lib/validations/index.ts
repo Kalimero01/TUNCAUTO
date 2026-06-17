@@ -88,6 +88,13 @@ export const testDriveSchema = z.object({
   vehicleModel: z.string().min(1).max(500),
 });
 
+export const contactMessageSchema = z.object({
+  customerName: z.string().min(1).max(100),
+  phone: z.string().min(3).max(30),
+  email: z.string().email(),
+  message: z.string().min(1).max(5000),
+});
+
 export const chatMessageSchema = z.object({
   content: z.string().min(1).max(2000),
   senderName: z.preprocess(

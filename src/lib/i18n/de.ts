@@ -5,6 +5,7 @@ export const de = {
   vehicleNotFound: "Fahrzeug nicht gefunden.",
   submissionNotFound: "Angebot nicht gefunden.",
   testDriveNotFound: "Probefahrt-Anfrage nicht gefunden.",
+  contactMessageNotFound: "Kontaktanfrage nicht gefunden.",
   tooManyRequests: "Zu viele Anfragen. Bitte warten.",
   tooManyAttempts: "Zu viele Versuche. Bitte warten.",
   userNotFound: "Benutzer nicht gefunden.",
@@ -23,6 +24,24 @@ export const submissionLabels = {
   offersTitle: "Verkaufsangebote",
   noOffers: "Keine Angebote gefunden.",
   backToOffers: "← Angebote",
+} as const;
+
+export const contactLabels = {
+  heading: "Kontaktieren Sie uns!",
+  intro:
+    "Das Team von Tunc Automobile in Ahlen steht Ihnen jederzeit zur Verfügung. Ob Fragen zu unseren Fahrzeugen, Finanzierung oder einer Probefahrt — wir helfen Ihnen gerne weiter.",
+  customerName: "Vor- & Nachname",
+  email: "E-Mail",
+  phone: "Tel. Nr.",
+  message: "Nachricht",
+  submit: "Los geht's",
+  submitting: "Wird gesendet...",
+  successTitle: "Nachricht erhalten!",
+  successMessage: "Vielen Dank für Ihre Nachricht. Wir melden uns in Kürze bei Ihnen.",
+  requestsTitle: "Kontaktanfragen",
+  noRequests: "Keine Kontaktanfragen gefunden.",
+  backToRequests: "← Kontaktanfragen",
+  deleteConfirm: "Möchten Sie diese Kontaktanfrage wirklich löschen?",
 } as const;
 
 export const testDriveLabels = {
@@ -63,6 +82,7 @@ export const adminNav = [
   { href: "/admin/vehicles", label: "Fahrzeuge" },
   { href: "/admin/submissions", label: "Angebote" },
   { href: "/admin/probefahrt", label: "Probefahrten" },
+  { href: "/admin/kontaktanfragen", label: "Kontaktanfragen" },
   { href: "/admin/social", label: "Social Media" },
   { href: "/admin/contact", label: "Kontakt & Logo" },
   { href: "/admin/impressum", label: "Impressum" },

@@ -1,4 +1,5 @@
 import { HeroSection, FeaturedVehicles, HomeTextBlocks } from "@/components/home/hero";
+import { ContactSection } from "@/components/home/contact-section";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo";
@@ -29,6 +30,7 @@ export default function HomePage() {
         </div>
       </section>
       <HomeTextBlocks />
+      <ContactSection />
     </>
   );
 }

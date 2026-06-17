@@ -148,6 +148,21 @@ export function serializeTestDriveRequest(request: {
   };
 }
 
+export function serializeContactMessage(message: {
+  id: string;
+  customerName: string;
+  phone: string;
+  email: string;
+  message: string;
+  readAt: Date | null;
+  createdAt: Date;
+}) {
+  return {
+    ...message,
+    isRead: message.readAt !== null,
+  };
+}
+
 function formatFile(file: {
   id: string;
   filename: string;
