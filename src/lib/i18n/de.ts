@@ -24,6 +24,7 @@ export const submissionLabels = {
   offersTitle: "Verkaufsangebote",
   noOffers: "Keine Angebote gefunden.",
   backToOffers: "← Angebote",
+  deleteConfirm: "Möchten Sie dieses Angebot wirklich löschen?",
 } as const;
 
 export const contactLabels = {

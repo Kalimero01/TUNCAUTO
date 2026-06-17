@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SellerContactCard } from "@/components/admin/seller-contact";
@@ -35,9 +35,16 @@ type Submission = {
 
 export default function SubmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  async function handleDelete() {
+    if (!confirm(submissionLabels.deleteConfirm)) return;
+    const res = await fetch(`/api/submissions/${id}`, { method: "DELETE" });
+    if (res.ok) router.push("/admin/submissions");
+  }
 
   async function load() {
     const res = await fetch(`/api/submissions/${id}`);
@@ -56,9 +63,18 @@ export default function SubmissionDetailPage() {
 
   return (
     <div>
-      <Link href="/admin/submissions" className="text-sm text-brand-400 hover:text-brand-300">
-        {submissionLabels.backToOffers}
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/admin/submissions" className="text-sm text-brand-400 hover:text-brand-300">
+          {submissionLabels.backToOffers}
+        </Link>
+        <button
+          type="button"
+          onClick={() => void handleDelete()}
+          className="text-sm text-red-400 hover:text-red-300"
+        >
+          Löschen
+        </button>
+      </div>
 
       <SellerContactCard
         name={submission.sellerName}

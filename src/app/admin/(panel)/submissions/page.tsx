@@ -31,8 +31,14 @@ export default function AdminSubmissionsPage() {
   }
 
   useEffect(() => {
-    load();
+    void load();
   }, []);
+
+  async function handleDelete(id: string) {
+    if (!confirm(submissionLabels.deleteConfirm)) return;
+    const res = await fetch(`/api/submissions/${id}`, { method: "DELETE" });
+    if (res.ok) void load();
+  }
 
   const filtered = submissions.filter((s) => {
     if (filter === "UNREAD") return !s.isRead;
@@ -62,35 +68,43 @@ export default function AdminSubmissionsPage() {
       ) : (
         <div className="mt-8 space-y-3">
           {filtered.map((s) => (
-            <Link
+            <div
               key={s.id}
-              href={`/admin/submissions/${s.id}`}
               className="flex items-center justify-between rounded-xl border border-zinc-800 px-5 py-4 transition hover:border-zinc-700"
             >
-              <div className="flex items-center gap-3">
-                {!s.isRead && (
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-brand-500" aria-label="Ungelesen" />
-                )}
-                <div>
-                  <p className="font-medium text-white">
-                    {s.make} {s.model} {s.year}
-                  </p>
-                  <div className="mt-1">
-                    <SellerContactSummary
-                      name={s.sellerName}
-                      email={s.sellerEmail}
-                      phone={s.sellerPhone}
-                    />
+              <Link href={`/admin/submissions/${s.id}`} className="min-w-0 flex-1">
+                <div className="flex items-center gap-3">
+                  {!s.isRead && (
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-brand-500" aria-label="Ungelesen" />
+                  )}
+                  <div>
+                    <p className="font-medium text-white">
+                      {s.make} {s.model} {s.year}
+                    </p>
+                    <div className="mt-1">
+                      <SellerContactSummary
+                        name={s.sellerName}
+                        email={s.sellerEmail}
+                        phone={s.sellerPhone}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-right">
+              </Link>
+              <div className="ml-4 flex shrink-0 flex-col items-end gap-2">
                 <ReadBadge isRead={s.isRead} />
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="text-xs text-zinc-500">
                   {new Date(s.createdAt).toLocaleDateString("de-DE")}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => void handleDelete(s.id)}
+                  className="text-sm text-red-400 hover:text-red-300"
+                >
+                  Löschen
+                </button>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
