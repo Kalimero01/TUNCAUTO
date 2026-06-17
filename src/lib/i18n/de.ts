@@ -77,7 +77,6 @@ export const adminNav = [
   { href: "/admin", label: "Übersicht", exact: true },
   { href: "/admin/homepage", label: "Startseite" },
   { href: "/admin/about", label: "Über uns" },
-  { href: "/admin/vision-mission", label: "Vision & Mission" },
   { href: "/admin/vehicles", label: "Fahrzeuge" },
   { href: "/admin/submissions", label: "Angebote" },
   { href: "/admin/probefahrt", label: "Probefahrten" },

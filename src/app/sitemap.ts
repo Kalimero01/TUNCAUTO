@@ -13,7 +13,6 @@ const staticPages: Array<{
   { path: "/araclar", priority: 0.9, changeFrequency: "daily" },
   { path: "/sat", priority: 0.8, changeFrequency: "monthly" },
   { path: "/hakkimizda", priority: 0.7, changeFrequency: "monthly" },
-  { path: "/vizyon-misyon", priority: 0.6, changeFrequency: "monthly" },
   { path: "/iletisim", priority: 0.8, changeFrequency: "monthly" },
   { path: "/impressum", priority: 0.3, changeFrequency: "yearly" },
   { path: "/datenschutz", priority: 0.3, changeFrequency: "yearly" },

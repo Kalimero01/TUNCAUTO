@@ -130,12 +130,6 @@ export const pageMetadata = {
     description: "Datenschutzerklärung von Tunc Automobile in Ahlen.",
     path: "/datenschutz",
   }),
-  visionMission: buildPageMetadata({
-    title: "Vision & Mission",
-    description:
-      "Vision und Mission von Tunc Automobile — Premium Gebrauchtwagen aus Ahlen für Hamm, Beckum und Deutschland.",
-    path: "/vizyon-misyon",
-  }),
 } satisfies Record<string, Metadata>;
 
 export function buildRootMetadata(): Metadata {

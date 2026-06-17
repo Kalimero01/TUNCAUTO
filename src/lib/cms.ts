@@ -23,14 +23,6 @@ export async function getAbout() {
   }
 }
 
-export async function getVisionMission() {
-  try {
-    return await prisma.visionMission.findUnique({ where: { id: "vision_mission" } });
-  } catch {
-    return null;
-  }
-}
-
 export async function getHomeMedia() {
   try {
     return await prisma.homeMedia.findMany({

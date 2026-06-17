@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/admin/chat", destination: "/admin/submissions", permanent: true },
       { source: "/admin/chat/:id", destination: "/admin/submissions/:id", permanent: true },
+      { source: "/admin/vision-mission", destination: "/admin", permanent: true },
+      { source: "/vizyon-misyon", destination: "/hakkimizda", permanent: true },
       { source: "/sat/mesaj/:id", destination: "/sat", permanent: true },
     ];
   },
