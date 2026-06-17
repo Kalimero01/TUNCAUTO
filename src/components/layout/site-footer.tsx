@@ -89,6 +89,18 @@ export async function SiteFooter() {
             <Link href="/datenschutz" className="link-hover hover:text-zinc-400">Datenschutz</Link>
           </div>
         </div>
+        <p className="mt-6 text-center text-[11px] text-zinc-700">
+          Diese Website wurde von{" "}
+          <a
+            href="https://www.devsoftcraft.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-hover text-zinc-600 hover:text-zinc-500"
+          >
+            DevSoftCraft
+          </a>{" "}
+          erstellt.
+        </p>
       </div>
     </footer>
   );
