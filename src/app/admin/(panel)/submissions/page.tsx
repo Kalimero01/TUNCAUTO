@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SellerContactSummary } from "@/components/admin/seller-contact";
 import { de, submissionLabels } from "@/lib/i18n/de";
-import { formatPrice } from "@/lib/utils";
 
 type Submission = {
   id: string;
@@ -14,7 +13,6 @@ type Submission = {
   make: string;
   model: string;
   year: number;
-  price: string;
   status: string;
   isRead: boolean;
   createdAt: string;
@@ -88,7 +86,6 @@ export default function AdminSubmissionsPage() {
               </div>
               <div className="text-right">
                 <ReadBadge isRead={s.isRead} />
-                <p className="mt-1 text-sm text-zinc-400">{formatPrice(s.price)}</p>
                 <p className="mt-1 text-xs text-zinc-500">
                   {new Date(s.createdAt).toLocaleDateString("de-DE")}
                 </p>

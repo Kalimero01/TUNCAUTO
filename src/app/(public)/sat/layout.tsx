@@ -9,7 +9,7 @@ export default function SellLayout({ children }: { children: React.ReactNode }) 
       <JsonLd
         data={buildBreadcrumbJsonLd([
           { name: "Startseite", path: "/" },
-          { name: "Fahrzeug verkaufen", path: "/sat" },
+          { name: "Ankauf", path: "/sat" },
         ])}
       />
       {children}

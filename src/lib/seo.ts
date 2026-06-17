@@ -96,9 +96,9 @@ export const pageMetadata = {
     path: "/araclar",
   }),
   sell: buildPageMetadata({
-    title: "Auto verkaufen in Ahlen & Umgebung",
+    title: "Ankauf in Ahlen & Umgebung",
     description:
-      "Verkaufen Sie Ihr Fahrzeug fair und unkompliziert bei Tunc Automobile in Ahlen — auch für Kunden aus Hamm, Beckum und deutschlandweit.",
+      "Fahrzeug-Ankauf bei Tunc Automobile in Ahlen — schnelle Bewertung und faire Angebote für Kunden aus Hamm, Beckum und deutschlandweit.",
     path: "/sat",
   }),
   about: buildPageMetadata({

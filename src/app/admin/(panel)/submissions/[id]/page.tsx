@@ -7,7 +7,7 @@ import Link from "next/link";
 import { SellerContactCard } from "@/components/admin/seller-contact";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { de, submissionLabels } from "@/lib/i18n/de";
-import { formatMileage, formatPrice } from "@/lib/utils";
+import { formatMileage } from "@/lib/utils";
 
 type Submission = {
   id: string;
@@ -17,7 +17,7 @@ type Submission = {
   make: string;
   model: string;
   year: number;
-  price: string;
+  price: string | null;
   desiredPrice: string | null;
   mileage: number | null;
   fuelType: string | null;
@@ -87,10 +87,6 @@ export default function SubmissionDetailPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="space-y-6">
-          <InfoBlock title="Preis" value={formatPrice(submission.price)} />
-          {submission.desiredPrice && (
-            <InfoBlock title="Wunschpreis" value={formatPrice(submission.desiredPrice)} />
-          )}
           <InfoBlock title="Kilometerstand" value={formatMileage(submission.mileage)} />
           <InfoBlock title="Kraftstoff" value={submission.fuelType ?? "—"} />
           <InfoBlock title="Getriebe" value={submission.transmission ?? "—"} />

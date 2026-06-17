@@ -101,8 +101,8 @@ export default function SellPage() {
       <div>
         <PageHeroBackground
           imageSrc={MERCEDES_G_CLASS_BG}
-          kicker="Fahrzeug verkaufen"
-          title="Fahrzeug verkaufen"
+          kicker="Ankauf"
+          title="Ankauf"
         />
 
         <section className="relative mx-auto max-w-2xl px-4 py-14 text-center sm:px-6 sm:py-20">
@@ -125,8 +125,8 @@ export default function SellPage() {
     <div>
       <PageHeroBackground
         imageSrc={MERCEDES_G_CLASS_BG}
-        kicker="Fahrzeug verkaufen"
-        title="Fahrzeug verkaufen"
+        kicker="Ankauf"
+        title="Ankauf"
         subtitle="Füllen Sie das Formular aus — wir bewerten Ihr Fahrzeug schnell und fair."
       />
 
@@ -135,7 +135,10 @@ export default function SellPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
         <fieldset className="space-y-4 rounded-sm border border-zinc-800 p-6">
           <legend className="px-2 text-sm font-medium text-zinc-400">{submissionLabels.contact}</legend>
-          <Input name="sellerName" label={submissionLabels.name} required />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input name="sellerFirstName" label={submissionLabels.firstName} required />
+            <Input name="sellerLastName" label={submissionLabels.lastName} required />
+          </div>
           <Input name="sellerEmail" label={submissionLabels.email} type="email" required />
           <Input name="sellerPhone" label={submissionLabels.phone} type="tel" required />
         </fieldset>
@@ -163,8 +166,6 @@ export default function SellPage() {
             </div>
             <Input name="model" label="Modell" required />
             <Input name="year" label="Baujahr" type="number" min={1900} max={2030} required />
-            <Input name="price" label="Aktueller Preis (€)" type="number" min={0} required />
-            <Input name="desiredPrice" label="Wunschpreis (€)" type="number" min={0} />
             <Input name="mileage" label="Kilometerstand" type="number" min={0} />
             <Input name="fuelType" label="Kraftstoff" />
             <Input name="transmission" label="Getriebe" />

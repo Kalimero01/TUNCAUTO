@@ -90,7 +90,7 @@ export function serializeSubmission(submission: {
   make: string;
   model: string;
   year: number;
-  price: { toString(): string } | number;
+  price: { toString(): string } | number | null;
   desiredPrice: { toString(): string } | number | null;
   mileage: number | null;
   fuelType: string | null;
@@ -119,7 +119,7 @@ export function serializeSubmission(submission: {
 }) {
   return {
     ...submission,
-    price: submission.price.toString(),
+    price: submission.price?.toString() ?? null,
     desiredPrice: submission.desiredPrice?.toString() ?? null,
     images:
       submission.files

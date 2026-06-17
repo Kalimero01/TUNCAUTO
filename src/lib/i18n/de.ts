@@ -15,9 +15,10 @@ export const de = {
 
 export const submissionLabels = {
   contact: "Kontakt",
-  name: "Name",
+  firstName: "Vorname",
+  lastName: "Nachname",
   email: "E-Mail",
-  phone: "Telefon",
+  phone: "Telefonnummer",
   offersTitle: "Verkaufsangebote",
   noOffers: "Keine Angebote gefunden.",
   backToOffers: "← Angebote",
@@ -28,7 +29,7 @@ export const publicNav = [
   { href: "/hakkimizda", label: "Über uns" },
   { href: "/vizyon-misyon", label: "Vision & Mission" },
   { href: "/araclar", label: "Fahrzeuge" },
-  { href: "/sat", label: "Fahrzeug verkaufen" },
+  { href: "/sat", label: "Ankauf" },
   { href: "/iletisim", label: "Kontakt" },
 ] as const;
 

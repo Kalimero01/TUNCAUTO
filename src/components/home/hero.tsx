@@ -101,7 +101,7 @@ export async function HeroSection() {
               href="/sat"
               className="btn-outline rounded-sm border border-zinc-600 px-8 py-3.5 text-sm font-semibold tracking-wide text-zinc-200 hover:text-white"
             >
-              Fahrzeug verkaufen
+              Ankauf
             </Link>
           </div>
         </div>

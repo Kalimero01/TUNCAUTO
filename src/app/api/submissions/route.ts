@@ -35,13 +35,14 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
 
   const raw = {
-    sellerName: formData.get("sellerName"),
+    sellerFirstName: formData.get("sellerFirstName"),
+    sellerLastName: formData.get("sellerLastName"),
     sellerEmail: formData.get("sellerEmail"),
     sellerPhone: formData.get("sellerPhone"),
     make: formData.get("make"),
     model: formData.get("model"),
     year: formData.get("year"),
-    price: formData.get("price"),
+    price: formData.get("price") || null,
     desiredPrice: formData.get("desiredPrice") || null,
     mileage: formData.get("mileage") || null,
     fuelType: formData.get("fuelType") || null,
@@ -73,14 +74,14 @@ export async function POST(request: NextRequest) {
 
   const submission = await prisma.sellerSubmission.create({
     data: {
-      sellerName: parsed.data.sellerName,
+      sellerName: `${parsed.data.sellerFirstName.trim()} ${parsed.data.sellerLastName.trim()}`,
       sellerEmail: parsed.data.sellerEmail,
       sellerPhone: parsed.data.sellerPhone,
       make: parsed.data.make,
       model: parsed.data.model,
       year: parsed.data.year,
-      price: parsed.data.price,
-      desiredPrice: parsed.data.desiredPrice,
+      price: parsed.data.price ?? null,
+      desiredPrice: parsed.data.desiredPrice ?? null,
       mileage: parsed.data.mileage,
       fuelType: parsed.data.fuelType,
       transmission: parsed.data.transmission,

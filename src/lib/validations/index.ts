@@ -61,13 +61,14 @@ const yesNoDetails = z
   );
 
 export const submissionSchema = z.object({
-  sellerName: z.string().min(2).max(100),
+  sellerFirstName: z.string().min(1).max(50),
+  sellerLastName: z.string().min(1).max(50),
   sellerEmail: z.string().email(),
   sellerPhone: z.string().min(3).max(20),
   make: z.string().min(1).max(100),
   model: z.string().min(1).max(100),
   year: z.coerce.number().int().min(1900).max(new Date().getFullYear() + 1),
-  price: z.coerce.number().positive(),
+  price: z.coerce.number().positive().optional().nullable(),
   desiredPrice: z.coerce.number().positive().optional().nullable(),
   mileage: z.coerce.number().int().min(0).optional().nullable(),
   fuelType: z.string().max(50).optional().nullable(),
