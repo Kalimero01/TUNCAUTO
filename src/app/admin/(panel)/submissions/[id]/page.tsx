@@ -17,8 +17,6 @@ type Submission = {
   make: string;
   model: string;
   year: number;
-  price: string | null;
-  desiredPrice: string | null;
   mileage: number | null;
   fuelType: string | null;
   transmission: string | null;

@@ -67,7 +67,6 @@ export const testDriveLabels = {
 export const publicNav = [
   { href: "/", label: "Startseite" },
   { href: "/hakkimizda", label: "Über uns" },
-  { href: "/vizyon-misyon", label: "Vision & Mission" },
   { href: "/araclar", label: "Fahrzeuge" },
   { href: "/probefahrt", label: "Probefahrt" },
   { href: "/sat", label: "Ankauf" },

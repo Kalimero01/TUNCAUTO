@@ -90,8 +90,6 @@ export function serializeSubmission(submission: {
   make: string;
   model: string;
   year: number;
-  price: { toString(): string } | number | null;
-  desiredPrice: { toString(): string } | number | null;
   mileage: number | null;
   fuelType: string | null;
   transmission: string | null;
@@ -108,6 +106,8 @@ export function serializeSubmission(submission: {
   readAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  price?: { toString(): string } | number | null;
+  desiredPrice?: { toString(): string } | number | null;
   files?: Array<{
     id: string;
     filename: string;
@@ -117,16 +117,18 @@ export function serializeSubmission(submission: {
     sortOrder?: number;
   }>;
 }) {
+  const { files, price, desiredPrice, ...data } = submission;
+  void price;
+  void desiredPrice;
+
   return {
-    ...submission,
-    price: submission.price?.toString() ?? null,
-    desiredPrice: submission.desiredPrice?.toString() ?? null,
+    ...data,
     images:
-      submission.files
+      files
         ?.filter((f) => f.type === "IMAGE")
         .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
         .map(formatFile) ?? [],
-    videos: submission.files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
+    videos: files?.filter((f) => f.type === "VIDEO").map(formatFile) ?? [],
     isRead: submission.readAt !== null,
     files: undefined,
   };
