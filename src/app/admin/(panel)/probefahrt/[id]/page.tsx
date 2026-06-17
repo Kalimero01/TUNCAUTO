@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { SellerContactCard } from "@/components/admin/seller-contact";
 import { de, testDriveLabels } from "@/lib/i18n/de";
@@ -19,8 +19,15 @@ type TestDriveRequest = {
 
 export default function ProbefahrtDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [request, setRequest] = useState<TestDriveRequest | null>(null);
   const [loading, setLoading] = useState(true);
+
+  async function handleDelete() {
+    if (!confirm("Möchten Sie diese Probefahrt-Anfrage wirklich löschen?")) return;
+    const res = await fetch(`/api/probefahrt/${id}`, { method: "DELETE" });
+    if (res.ok) router.push("/admin/probefahrt");
+  }
 
   async function load() {
     const res = await fetch(`/api/probefahrt/${id}`);
@@ -39,9 +46,18 @@ export default function ProbefahrtDetailPage() {
 
   return (
     <div>
-      <Link href="/admin/probefahrt" className="text-sm text-brand-400 hover:text-brand-300">
-        {testDriveLabels.backToRequests}
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/admin/probefahrt" className="text-sm text-brand-400 hover:text-brand-300">
+          {testDriveLabels.backToRequests}
+        </Link>
+        <button
+          type="button"
+          onClick={() => void handleDelete()}
+          className="text-sm text-red-400 hover:text-red-300"
+        >
+          Löschen
+        </button>
+      </div>
 
       <SellerContactCard
         name={request.customerName}

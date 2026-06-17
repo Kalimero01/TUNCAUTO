@@ -29,6 +29,9 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   if (authResult instanceof Response) return authResult;
 
   const { id } = await params;
+  const request = await prisma.testDriveRequest.findUnique({ where: { id } });
+  if (!request) return jsonError("Probefahrt-Anfrage nicht gefunden.", 404);
+
   await prisma.testDriveRequest.delete({ where: { id } });
   return new Response(null, { status: 204 });
 }
