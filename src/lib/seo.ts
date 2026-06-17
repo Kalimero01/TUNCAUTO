@@ -101,6 +101,12 @@ export const pageMetadata = {
       "Fahrzeug-Ankauf bei Tunc Automobile in Ahlen — schnelle Bewertung und faire Angebote für Kunden aus Hamm, Beckum und deutschlandweit.",
     path: "/sat",
   }),
+  probefahrt: buildPageMetadata({
+    title: "Probefahrt vereinbaren — Ahlen",
+    description:
+      "Probefahrt bei Tunc Automobile in Ahlen vereinbaren — Premium Gebrauchtwagen testen. Termin online anfragen für Kunden aus Hamm, Beckum und deutschlandweit.",
+    path: "/probefahrt",
+  }),
   about: buildPageMetadata({
     title: "Über uns — Autohaus in Ahlen",
     description:

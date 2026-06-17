@@ -5,12 +5,13 @@ export async function GET() {
   const authResult = await requireAdmin();
   if (authResult instanceof Response) return authResult;
 
-  const [vehicleCount, availableCount, pendingSubmissions, unreadSubmissions, recentSubmissions] =
+  const [vehicleCount, availableCount, pendingSubmissions, unreadSubmissions, unreadTestDrives, recentSubmissions, recentTestDrives] =
     await Promise.all([
       prisma.vehicle.count(),
       prisma.vehicle.count({ where: { status: "AVAILABLE" } }),
       prisma.sellerSubmission.count({ where: { status: "PENDING" } }),
       prisma.sellerSubmission.count({ where: { readAt: null } }),
+      prisma.testDriveRequest.count({ where: { readAt: null } }),
       prisma.sellerSubmission.findMany({
         where: { readAt: null },
         orderBy: { createdAt: "desc" },
@@ -24,6 +25,17 @@ export async function GET() {
           createdAt: true,
         },
       }),
+      prisma.testDriveRequest.findMany({
+        where: { readAt: null },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          customerName: true,
+          vehicleModel: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
   return jsonData({
@@ -31,6 +43,8 @@ export async function GET() {
     availableCount,
     pendingSubmissions,
     unreadSubmissions,
+    unreadTestDrives,
     recentSubmissions,
+    recentTestDrives,
   });
 }

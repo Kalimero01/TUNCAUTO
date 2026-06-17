@@ -252,3 +252,17 @@ model SocialLink {
 
   @@map("social_links")
 }
+
+model TestDriveRequest {
+  id                 String    @id @default(cuid())
+  customerName       String
+  phone              String
+  email              String
+  preferredDateTime  String
+  vehicleModel       String    @db.Text
+  readAt             DateTime?
+  createdAt          DateTime  @default(now())
+
+  @@index([readAt, createdAt])
+  @@map("test_drive_requests")
+}

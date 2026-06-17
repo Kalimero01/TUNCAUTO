@@ -103,6 +103,12 @@ export async function HeroSection() {
             >
               Ankauf
             </Link>
+            <Link
+              href="/probefahrt"
+              className="btn-outline rounded-sm border border-zinc-600 px-8 py-3.5 text-sm font-semibold tracking-wide text-zinc-200 hover:text-white"
+            >
+              Probefahrt
+            </Link>
           </div>
         </div>
       </div>

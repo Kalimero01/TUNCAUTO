@@ -132,6 +132,22 @@ export function serializeSubmission(submission: {
   };
 }
 
+export function serializeTestDriveRequest(request: {
+  id: string;
+  customerName: string;
+  phone: string;
+  email: string;
+  preferredDateTime: string;
+  vehicleModel: string;
+  readAt: Date | null;
+  createdAt: Date;
+}) {
+  return {
+    ...request,
+    isRead: request.readAt !== null,
+  };
+}
+
 function formatFile(file: {
   id: string;
   filename: string;

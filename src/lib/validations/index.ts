@@ -80,6 +80,14 @@ export const submissionSchema = z.object({
   hasPartsReplaced: yesNoDetails,
 });
 
+export const testDriveSchema = z.object({
+  customerName: z.string().min(1).max(100),
+  phone: z.string().min(3).max(30),
+  email: z.string().email(),
+  preferredDateTime: z.string().min(1).max(100),
+  vehicleModel: z.string().min(1).max(500),
+});
+
 export const chatMessageSchema = z.object({
   content: z.string().min(1).max(2000),
   senderName: z.preprocess(
