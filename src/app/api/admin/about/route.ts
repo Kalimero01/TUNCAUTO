@@ -4,6 +4,8 @@ import { jsonData, jsonError, requireAdmin } from "@/lib/api-helpers";
 import { aboutSchema } from "@/lib/validations";
 import { saveUpload, deleteUploadFile } from "@/lib/uploads";
 
+const DEFAULT_ABOUT_TITLE = "Über uns";
+
 export async function GET() {
   const about = await prisma.about.findUnique({ where: { id: "about" } });
   return jsonData(about);
@@ -40,4 +42,36 @@ export async function PUT(request: NextRequest) {
   });
 
   return jsonData(about);
+}
+
+export async function PATCH(request: NextRequest) {
+  const authResult = await requireAdmin();
+  if (authResult instanceof Response) return authResult;
+
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== "object") {
+    return jsonError("Ungültige Anfrage.", 400);
+  }
+
+  const action = (body as { action?: string }).action;
+
+  if (action === "clearContent") {
+    const about = await prisma.about.upsert({
+      where: { id: "about" },
+      update: { content: "" },
+      create: { id: "about", title: DEFAULT_ABOUT_TITLE, content: "" },
+    });
+    return jsonData(about);
+  }
+
+  if (action === "clearTitle") {
+    const about = await prisma.about.upsert({
+      where: { id: "about" },
+      update: { title: DEFAULT_ABOUT_TITLE },
+      create: { id: "about", title: DEFAULT_ABOUT_TITLE, content: "" },
+    });
+    return jsonData(about);
+  }
+
+  return jsonError("Unbekannte Aktion.", 400);
 }
